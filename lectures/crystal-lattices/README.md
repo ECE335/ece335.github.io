@@ -1,6 +1,6 @@
 # Crystal Lattices
 
-Interactive marimo notebook for ECE335 Lecture 1 (Neamen Ch. 1.1–1.6).
+Interactive 3D lattice visualizations for ECE335 Lecture 1, used alongside the slides.
 
 **Student URL:** https://ece335.github.io/crystal-lattice
 

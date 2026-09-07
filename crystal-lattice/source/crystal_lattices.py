@@ -15,29 +15,10 @@ app = marimo.App(width="medium")
 
 @app.cell
 def _():
-    import sys
-    from pathlib import Path
-
     import marimo as mo
     import numpy as np
 
-    try:
-        if "pyodide" in sys.modules:
-            raise FileNotFoundError
-        _test = Path(__file__).parent / "images"
-        if _test.exists():
-            ASSET_DIR = Path(__file__).parent
-        else:
-            raise FileNotFoundError
-    except Exception:
-        ASSET_DIR = None
-
-    IMAGE_BASE = (
-        "https://ece335.github.io/crystal-lattice/images"
-        if ASSET_DIR is None
-        else str(ASSET_DIR / "images")
-    )
-    return IMAGE_BASE, mo, np
+    return mo, np
 
 
 @app.cell
@@ -346,160 +327,15 @@ def _(go, np):
 def _(mo):
     mo.md(r"""
     # Crystal Lattices
-    **ECE335 — Introduction to Electronic Devices · Lecture 1**
-
-    **References:** Neamen, *Semiconductor Physics and Devices*, Ch. 1, Sec. 1.1–1.6.
+    **ECE335 Lecture 1** — companion to the slides. Click and drag to rotate; scroll to zoom.
     """)
-    return
-
-
-@app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md(
-        r"""
-    ## 1. Semiconductors
-
-    Electronic devices are built in **semiconductors**. A semiconductor has an
-    electrical resistivity that we can **engineer** — by doping, temperature, or light —
-    unlike a metal (always conducting) or an insulator (always insulating).
-    """
-    )
-    _table = mo.md(
-        r"""
-    | Material type | Resistivity |
-    |:---:|:---:|
-    | **Insulators** | $\rho > 10^{8}\ \Omega\cdot\mathrm{cm}$ |
-    | **Conductors** | $\rho < 10^{-3}\ \Omega\cdot\mathrm{cm}$ |
-    | **Semiconductors** | **controllable** |
-    """
-    )
-    _img = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/resistivity_chart.jpg", width="70%")],
-        justify="center",
-    )
-    mo.vstack(
-        [
-            _header,
-            mo.hstack([_table, _img], justify="start", align="center", gap=2),
-        ]
-    )
-    return
-
-
-@app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md(
-        r"""
-    ## 2. Types of solids
-
-    A **crystal** is an infinite periodic arrangement of atoms (or groups of atoms)
-    in space. It has **discrete translational invariance**. Silicon used in
-    integrated circuits is a single crystal.
-    """
-    )
-
-    def _col(title, filename, caption):
-        return mo.vstack(
-            [
-                mo.md(f"**{title}**"),
-                mo.hstack(
-                    [mo.image(src=f"{IMAGE_BASE}/{filename}", width=200)],
-                    justify="center",
-                ),
-                mo.hstack(
-                    [
-                        mo.md(
-                            f'<span style="font-size:16px; color:#555">{caption}</span>'
-                        )
-                    ],
-                    justify="center",
-                ),
-            ],
-            align="center",
-            gap=0.3,
-        )
-
-    _table = mo.md(
-        r"""
-    | Type | Description | Example | Applications |
-    |:---:|:---:|:---:|:---:|
-    | **Crystalline** | Periodic, long-range order | Single-crystal Si | Most semiconductor devices |
-    | **Polycrystalline** | Crystal domains, short-range order | Poly-Si | Transistor gates, resistors |
-    | **Amorphous** | No crystal structure | a-Si | Low-cost solar cells |
-    """
-    )
-    _photos = mo.hstack(
-        [
-            _col("Crystalline", "crystalline-Si.jpg", "Single-crystal Si"),
-            _col("Polycrystalline", "poly-Si.jpg", "Poly-Si gates"),
-            _col("Amorphous", "a-Si.jpg", "a-Si solar cells"),
-        ],
-        justify="space-around",
-    )
-    mo.vstack([_header, _table, _photos])
     return
 
 
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 3. Crystal definitions
-
-    | Term | Definition |
-    |:---:|:---|
-    | **Lattice** | A set of points in space, $\vec{R} = u_1\vec{a}_1 + u_2\vec{a}_2 + u_3\vec{a}_3$, with integers $\{u_i\}$ and primitive vectors $\{\vec{a}_i\}$ |
-    | **Basis** | The group of atoms attached to each lattice point, $\vec{b}_j = v_{j,1}\vec{a}_1 + v_{j,2}\vec{a}_2 + v_{j,3}\vec{a}_3$ |
-    | **Unit cell** | The volume that is repeated to fill all space |
-    | **Primitive cell** | The smallest unit cell (one lattice point per cell) |
-    | **Lattice constant** | The periodicity of the lattice, usually written $a$ |
-
-    $$\boxed{\textbf{Lattice} + \textbf{Basis} = \textbf{Crystal structure}}$$
-
-    There is only **one lattice point per primitive cell**, but lattice points on
-    faces and edges are shared among adjacent conventional cells. The primitive
-    cell is not unique; the number of atoms in a primitive cell is.
-    """)
-    return
-
-
-@app.cell
-def _(IMAGE_BASE, mo):
-    def _panel(title, filename):
-        return mo.vstack(
-            [
-                mo.md(f"**{title}**"),
-                mo.image(src=f"{IMAGE_BASE}/{filename}", width="100%"),
-            ],
-            align="start",
-        )
-
-    mo.hstack(
-        [
-            _panel("2D square lattice", "lattice_2Dsquare.jpg"),
-            _panel("1-atom basis", "basis_1atom.jpg"),
-            _panel("2-atom basis", "basis_2atom.jpg"),
-            _panel("Unit cell", "unitcell.jpg"),
-        ],
-        align="start",
-        widths="equal",
-        justify="space-between",
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## 4. 3D crystal lattices
-
-    There are **14 Bravais lattices**. The cubic ones that matter for
-    semiconductors are below. Click and drag the plots to rotate.
-
-    | Lattice | Atoms in the conventional cube | Atoms per conventional cell |
-    |:---|:---|:---:|
-    | **Simple cubic (SC)** | Corners | $8\times\tfrac{1}{8} = 1$ |
-    | **Body-centered cubic (BCC)** | Corners + body center | $1 + 1 = 2$ |
-    | **Face-centered cubic (FCC)** | Corners + face centers | $1 + 6\times\tfrac{1}{2} = 4$ |
+    ## Simple cubic, BCC, and FCC
 
     Colored arrows are a set of **primitive vectors** $\vec{a}_1,\vec{a}_2,\vec{a}_3$.
     """)
@@ -653,30 +489,12 @@ def _(
 
 
 @app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md("### 4.1 Diamond")
-    _text = mo.md(
-        r"""
-    Silicon and germanium (Group IV) crystallize in the **diamond** structure:
+def _(mo):
+    mo.md(r"""
+    ## Diamond
 
-    - FCC Bravais lattice with a **2-atom basis**
-      - $\vec{b}_1 = (0,0,0)$
-      - $\vec{b}_2 = \bigl(\tfrac{1}{4},\tfrac{1}{4},\tfrac{1}{4}\bigr)a$
-    - Equivalently: **two interpenetrating FCC lattices** offset by $a/4$ along the body diagonal
-    - **8 atoms** per conventional cubic cell
-    - Each atom has **4 nearest neighbours** (tetrahedral bonding)
-    """
-    )
-    _img = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/diamond_structure.jpg", width="50%")],
-        justify="center",
-    )
-    mo.vstack(
-        [
-            _header,
-            mo.hstack([_text, _img], justify="start", align="center", gap=2),
-        ]
-    )
+    Two interpenetrating FCC lattices. Use the buttons to show each sublattice.
+    """)
     return
 
 
@@ -693,29 +511,12 @@ def _(make_interpenetrating_fcc_figure):
 
 
 @app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md("### 4.2 Zinc blende")
-    _text = mo.md(
-        r"""
-    **Zinc blende** is the same geometry as diamond, but the two basis atoms
-    are different species — typically a **Group III** atom and a **Group V** atom.
+def _(mo):
+    mo.md(r"""
+    ## Zinc blende
 
-    - Same FCC + 2-atom basis as diamond
-    - One FCC sublattice is the cation (e.g. Ga, In); the other is the anion (e.g. As, P)
-    - **Examples:** GaAs, InP, ZnS
-    - III–V compounds are important for **optoelectronics** and **high-speed electronics**
-    """
-    )
-    _img = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/zinc_blende_structure.jpg", width="40%")],
-        justify="center",
-    )
-    mo.vstack(
-        [
-            _header,
-            mo.hstack([_text, _img], justify="start", align="center", gap=2),
-        ]
-    )
+    Same geometry as diamond; the two sublattices are different atoms (e.g. Ga and As).
+    """)
     return
 
 
@@ -728,100 +529,6 @@ def _(make_interpenetrating_fcc_figure):
         color2="#E69F00",
         title="Zinc blende (GaAs): 8 unit cells (2×2×2)",
     )
-    return
-
-
-@app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md(
-        r"""
-    ## 5. Elemental and compound semiconductors
-
-    - **Elemental** semiconductors are a single Group IV element: Si, Ge, C (diamond)
-    - **Compound** semiconductors combine two (or more) elements
-      - III–V: GaAs, InP, GaN, Al$_x$Ga$_{1-x}$As
-      - II–VI: CdTe, ZnSe
-    """
-    )
-    _img = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/periodictable.jpg", width="70%")],
-        justify="center",
-    )
-    _materials = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/semiconductormaterials.jpg", width="80%")],
-        justify="center",
-    )
-    mo.vstack([_header, _img, _materials], gap=1)
-    return
-
-
-@app.cell
-def _(IMAGE_BASE, mo):
-    _header = mo.md(
-        r"""
-    ## 6. Atomic bonding in semiconductors
-
-    Silicon (atomic number 14) has **4 valence electrons**. In the diamond lattice
-    each Si atom forms **covalent bonds** with 4 neighbours: the atoms share
-    electron pairs so that each has a filled outer shell.
-
-    - **Coordination number** = number of nearest neighbours = **4** for diamond and zinc blende
-    - In GaAs, Ga (3 valence electrons) and As (5 valence electrons) share electrons
-      in the same tetrahedral geometry — that is zinc blende
-    """
-    )
-    _img = mo.hstack(
-        [mo.image(src=f"{IMAGE_BASE}/diamond_coordinates.jpg", width="50%")],
-        justify="center",
-    )
-    _bonds = mo.md(
-        r"""
-    Other bonding types (for context):
-
-    | Bond | What holds the crystal together | Example |
-    |:---|:---|:---|
-    | **Covalent** | Shared electron pairs | Si, Ge, diamond, GaAs |
-    | **Ionic** | Coulomb attraction of opposite ions | NaCl |
-    | **Metallic** | Delocalized valence electrons | Na, Al, Cu |
-    | **van der Waals** | Dipole–dipole attraction | Molecular crystals, layered 2D materials |
-    """
-    )
-    mo.vstack([_header, _img, _bonds])
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## 7. Imperfections and impurities
-
-    Real crystals are not perfect. The defects we care about in devices are:
-
-    - **Vacancies** — a missing atom on a lattice site
-    - **Interstitials** — an extra atom squeezed between lattice sites
-    - **Substitutional impurities** — a foreign atom on a lattice site
-
-    **Doping** is the controlled introduction of substitutional impurities:
-
-    - Group V on a Si site (P, As, Sb) → extra electron → **n-type**
-    - Group III on a Si site (B, Al, Ga) → missing electron (hole) → **p-type**
-
-    This is how we make the resistivity of a semiconductor **engineerable**.
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## Takeaways
-
-    1. Devices are built in **crystals**. Structure and orientation affect performance.
-    2. **Lattice + basis = crystal structure.**
-    3. Si and Ge: **diamond** (FCC + 2-atom basis). III–V compounds: **zinc blende**.
-    4. In both, each atom has **4 nearest neighbours** (tetrahedral covalent bonding).
-    5. **Doping** replaces lattice atoms with Group III or V impurities and sets the carrier type.
-    """)
     return
 
 
