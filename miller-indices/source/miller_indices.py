@@ -758,38 +758,93 @@ def _(miller_tex, mo, np, plt):
             _v2 = -_v2
         return _v1, _v2
 
-    def plot_silicon_view(h, k, l):
+    def miller_plane_eq_tex(h, k, l, C):
+        _parts = []
+        for _coef, _name in ((h, "x"), (k, "y"), (l, "z")):
+            if _coef == 0:
+                continue
+            _mag = abs(int(_coef))
+            _term = _name if _mag == 1 else rf"{_mag}{_name}"
+            if not _parts:
+                _parts.append(_term if _coef > 0 else f"-{_term}")
+            elif _coef > 0:
+                _parts.append(f" + {_term}")
+            else:
+                _parts.append(f" - {_term}")
+        _left = "".join(_parts) if _parts else "0"
+        _C = float(C)
+        if abs(_C - round(_C)) < 1e-8:
+            _right = str(int(round(_C)))
+        else:
+            _right = f"{_C:.4g}"
+        return rf"{_left} = {_right}"
+
+    def diamond_atom_positions(v1, v2):
+        """Si sites in a 2×2 window of conventional cells (coordinates in units of a)."""
+        _pts = [
+            _i * v1 + _j * v2 + _b
+            for _i in range(3)
+            for _j in range(3)
+            for _b in DIAMOND_BASIS
+        ]
+        return _unique_points(_pts)
+
+    def silicon_view_geometry(h, k, l):
         _v1, _v2 = in_plane_lattice_vectors(h, k, l)
         _n = np.array([h, k, l], dtype=float)
         _n_hat = _n / np.linalg.norm(_n)
+        _pts = diamond_atom_positions(_v1, _v2)
         _M = np.column_stack([_v1, _v2, _n_hat])
-        _pts = []
-        for _i in range(3):
-            for _j in range(3):
-                _origin = _i * _v1 + _j * _v2
-                for _b in DIAMOND_BASIS:
-                    _pts.append(_origin + _b)
-        _pts = _unique_points(_pts)
-        _keep = []
-        for _r in _pts:
-            _a, _b, _d = np.linalg.solve(_M, _r)
-            if -1e-6 <= _a <= 2.0 + 1e-6 and -1e-6 <= _b <= 2.0 + 1e-6:
-                _keep.append(_r)
-        _pts = np.array(_keep)
+        _abc = np.linalg.solve(_M, _pts.T).T
+        _in_window = (
+            (_abc[:, 0] >= -1e-8)
+            & (_abc[:, 0] <= 2.0 + 1e-8)
+            & (_abc[:, 1] >= -1e-8)
+            & (_abc[:, 1] <= 2.0 + 1e-8)
+        )
+        _pts = _pts[_in_window]
+        _N = h * _pts[:, 0] + k * _pts[:, 1] + l * _pts[:, 2]
+        _C = float(np.min(_N))
+        _on = np.abs(_N - _C) < 1e-8
         _u = _v1 / np.linalg.norm(_v1)
         _w = _v2 - np.dot(_v2, _u) * _u
         _vax = _w / np.linalg.norm(_w)
         if np.dot(np.cross(_u, _vax), _n_hat) < 0:
             _vax = -_vax
         _xy = np.column_stack([_pts @ _u, _pts @ _vax])
-        _depth = _pts @ _n_hat
-        _front = np.min(np.round(_depth, 6))
-        _on = np.abs(_depth - _front) < 1e-4
+        return {
+            "h": int(h),
+            "k": int(k),
+            "l": int(l),
+            "pts": _pts,
+            "xy": _xy,
+            "on": _on,
+            "N": _N,
+            "C": _C,
+            "eq_tex": miller_plane_eq_tex(h, k, l, _C),
+            "v1": _v1,
+            "v2": _v2,
+            "u": _u,
+            "vax": _vax,
+            "n_on": int(np.count_nonzero(_on)),
+            "n_behind": int(np.count_nonzero(~_on)),
+            "d_over_a": 1.0 / np.sqrt(h**2 + k**2 + l**2),
+        }
+
+    def plot_silicon_view(geom):
+        _pts = geom["pts"]
+        _xy = geom["xy"]
+        _on = geom["on"]
+        _v1 = geom["v1"]
+        _v2 = geom["v2"]
+        _u = geom["u"]
+        _vax = geom["vax"]
+        _h, _k, _l = geom["h"], geom["k"], geom["l"]
 
         _fig, _ax = plt.subplots(figsize=(6.8, 6.8))
         for _i in range(len(_pts)):
             for _j in range(_i + 1, len(_pts)):
-                if abs(np.linalg.norm(_pts[_i] - _pts[_j]) - SI_NN) < 0.05:
+                if abs(np.linalg.norm(_pts[_i] - _pts[_j]) - SI_NN) < 1e-6:
                     _ax.plot(
                         [_xy[_i, 0], _xy[_j, 0]],
                         [_xy[_i, 1], _xy[_j, 1]],
@@ -835,9 +890,9 @@ def _(miller_tex, mo, np, plt):
             edgecolors="black",
             linewidths=0.6,
             zorder=4,
-            label=rf"On the ${miller_tex(h, k, l, 'plane')}$ plane",
+            label=rf"On the ${miller_tex(_h, _k, _l, 'plane')}$ plane",
         )
-        _dir = miller_tex(h, k, l, "family")
+        _dir = miller_tex(_h, _k, _l, "family")
         _in1 = miller_tex(
             int(round(_v1[0])), int(round(_v1[1])), int(round(_v1[2])), "direction"
         )
@@ -851,16 +906,16 @@ def _(miller_tex, mo, np, plt):
         else:
             _ax.set_xlabel(r"in-plane (units of $a$)", fontsize=16)
             _ax.set_ylabel(r"in-plane (units of $a$)", fontsize=16)
-
-            def _label_edge(_p0, _p1, _text):
-                _mid = 0.5 * (_p0 + _p1)
-                _edge = _p1 - _p0
+            _cell_xy = np.array(
+                [0.5 * (_v1 + _v2) @ _u, 0.5 * (_v1 + _v2) @ _vax]
+            )
+            for _vec, _text in ((_v1, rf"${_in1}$"), (_v2, rf"${_in2}$")):
+                _p1 = np.array([_vec @ _u, _vec @ _vax])
+                _mid = 0.5 * _p1
+                _edge = _p1.copy()
                 _nrm = np.array([-_edge[1], _edge[0]], dtype=float)
                 _nrm = _nrm / (np.linalg.norm(_nrm) + 1e-12)
-                _cell = np.array(
-                    [0.5 * (_v1 + _v2) @ _u, 0.5 * (_v1 + _v2) @ _vax]
-                )
-                if np.dot(_nrm, _cell - _mid) > 0:
+                if np.dot(_nrm, _cell_xy - _mid) > 0:
                     _nrm = -_nrm
                 _pos = _mid + 0.16 * _nrm
                 _ax.text(
@@ -871,17 +926,6 @@ def _(miller_tex, mo, np, plt):
                     ha="center",
                     va="center",
                 )
-
-            _label_edge(
-                np.array([0.0, 0.0]),
-                np.array([_v1 @ _u, _v1 @ _vax]),
-                rf"${_in1}$",
-            )
-            _label_edge(
-                np.array([0.0, 0.0]),
-                np.array([_v2 @ _u, _v2 @ _vax]),
-                rf"${_in2}$",
-            )
         _ax.tick_params(labelsize=16)
         _ax.set_title(
             rf"Si (diamond), viewed along ${_dir}$",
@@ -903,27 +947,47 @@ def _(miller_tex, mo, np, plt):
     si_h = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="h")
     si_k = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="k")
     si_l = mo.ui.slider(value=0, start=-2, stop=2, step=1, label="l")
-    return plot_silicon_view, si_h, si_k, si_l
+    return plot_silicon_view, si_h, si_k, si_l, silicon_view_geometry
 
 
 @app.cell
-def _(miller_tex, mo, plot_silicon_view, si_h, si_k, si_l):
+def _(
+    miller_tex,
+    mo,
+    plot_silicon_view,
+    si_h,
+    si_k,
+    si_l,
+    silicon_view_geometry,
+):
     _h = si_h.value
     _k = si_k.value
     _l = si_l.value
     if _h == 0 and _k == 0 and _l == 0:
         _body = mo.md(r"**$\langle 000\rangle$ is not a valid direction.**")
     else:
+        _geom = silicon_view_geometry(_h, _k, _l)
         _dir = miller_tex(_h, _k, _l, "family")
         _plane = miller_tex(_h, _k, _l, "plane")
+        _eq = _geom["eq_tex"]
+        _n_on = _geom["n_on"]
+        _n_behind = _geom["n_behind"]
+        _d = _geom["d_over_a"]
         _info = mo.md(
             rf"""
-    Viewing along ${_dir}$. In cubic Si that faces the plane ${_plane}$.  
-    Filled circles: atoms on that plane. Open circles: atoms further back.  
-    Dashed lines: conventional cubic cell edges (2×2 cells).
+    Viewing along ${_dir}$. Cubic Si $\Rightarrow$ the facing plane is ${_plane}$.
+
+    Diamond sites are computed from the 8-atom conventional basis. An atom at
+    $(x,y,z)$ (units of $a$) lies on that plane when
+
+    $${_eq}$$
+
+    The constant is the smallest $hx+ky+lz$ in the 2×2 window (the plane facing
+    you). **{_n_on}** atoms satisfy it (filled). **{_n_behind}** sit on parallel
+    planes further back (open). Spacing $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
-        _body = mo.vstack([_info, plot_silicon_view(_h, _k, _l)], gap=0.4)
+        _body = mo.vstack([_info, plot_silicon_view(_geom)], gap=0.4)
 
     mo.vstack(
         [
