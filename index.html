@@ -10,9 +10,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: #ffffff;
             min-height: 100vh;
-            color: #e8e8e8;
+            color: #1f2937;
             padding: 2rem;
         }
         .container { max-width: 900px; margin: 0 auto; }
@@ -20,51 +20,49 @@
             text-align: center;
             margin-bottom: 3rem;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: #f8fafc;
             border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e5e7eb;
         }
         h1 {
             font-size: 2.5rem;
-            font-weight: 300;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #64ffda, #48c9b0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #0f4c81;
         }
-        .subtitle { font-size: 1.2rem; color: #a0a0a0; }
-        .semester { margin-top: 1rem; color: #64ffda; font-weight: 500; }
+        .subtitle { font-size: 1.2rem; color: #4b5563; }
+        .semester { margin-top: 1rem; color: #0f4c81; font-weight: 600; }
         h2 {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            color: #64ffda;
-            font-weight: 400;
+            color: #0f4c81;
+            font-weight: 500;
         }
         .notebooks { display: grid; gap: 1rem; }
         .notebook-card {
             display: block;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: #ffffff;
             border-radius: 12px;
             text-decoration: none;
             color: inherit;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(15, 76, 129, 0.06);
+            transition: all 0.2s ease;
         }
         .notebook-card:hover {
-            background: rgba(100, 255, 218, 0.1);
-            border-color: #64ffda;
+            background: #f8fafc;
+            border-color: #0f4c81;
+            box-shadow: 0 4px 12px rgba(15, 76, 129, 0.1);
             transform: translateY(-2px);
         }
-        .notebook-title { font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem; color: #fff; }
-        .notebook-desc { color: #a0a0a0; font-size: 0.95rem; }
-        .notebook-lectures { margin-top: 0.75rem; font-size: 0.85rem; color: #64ffda; }
+        .notebook-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: #111827; }
+        .notebook-desc { color: #4b5563; font-size: 0.95rem; }
+        .notebook-lectures { margin-top: 0.75rem; font-size: 0.85rem; color: #0f4c81; font-weight: 600; }
         footer {
             margin-top: 3rem;
             text-align: center;
-            color: #666;
+            color: #6b7280;
             font-size: 0.9rem;
         }
     </style>
