@@ -64,7 +64,7 @@ def _():
 def _(mo):
     mo.md(r"""
     # Miller Indices
-    **ECE335** — companion to the slides.
+    **ECE335 - companion to lectures**
 
     Miller indices label **planes** and **directions** in a crystal. Device properties
     (cleavage, oxidation rate, carrier mobility, wafer flats) depend on which plane
