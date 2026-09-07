@@ -7,6 +7,7 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | Notebook | Source | URL |
 |:---|:---|:---|
 | Crystal Lattices | [lectures/crystal-lattices](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/crystal-lattices) | [ece335.github.io/crystal-lattice](https://ece335.github.io/crystal-lattice) |
+| Miller Indices | [lectures/miller-indices](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/miller-indices) | [ece335.github.io/miller-indices](https://ece335.github.io/miller-indices) |
 
 ## Adding a notebook later
 
