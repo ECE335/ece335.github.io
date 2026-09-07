@@ -327,7 +327,7 @@ def _(go, np):
 def _(mo):
     mo.md(r"""
     # Crystal Lattices
-    **ECE335 Lecture 1** — companion to the slides. Click and drag to rotate; scroll to zoom.
+    **ECE335** — companion to the slides. Click and drag to rotate; scroll to zoom.
     """)
     return
 
