@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECE335 — Introduction to Electronic Devices</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #64ffda, #48c9b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { font-size: 1.2rem; color: #a0a0a0; }
+        .semester { margin-top: 1rem; color: #64ffda; font-weight: 500; }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #64ffda;
+            font-weight: 400;
+        }
+        .notebooks { display: grid; gap: 1rem; }
+        .notebook-card {
+            display: block;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .notebook-card:hover {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: #64ffda;
+            transform: translateY(-2px);
+        }
+        .notebook-title { font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem; color: #fff; }
+        .notebook-desc { color: #a0a0a0; font-size: 0.95rem; }
+        .notebook-lectures { margin-top: 0.75rem; font-size: 0.85rem; color: #64ffda; }
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ECE335</h1>
+            <p class="subtitle">Introduction to Electronic Devices</p>
+            <p class="semester">Fall 2026</p>
+        </header>
+
+        <h2>Interactive Notebooks</h2>
+        <div class="notebooks">
+            <a href="crystal-lattice/" class="notebook-card">
+                <div class="notebook-title">Crystal Lattices</div>
+                <div class="notebook-desc">Crystal definitions, 3D lattices (SC, BCC, FCC, diamond, zinc blende), bonding, and doping</div>
+                <div class="notebook-lectures">Lecture 1</div>
+            </a>
+        </div>
+
+        <footer>
+            <p>Instructors: Joyce Poon and Nazir Kherani, University of Toronto</p>
+            <p>Copyright 2026. Licensed under CC BY 4.0 (attribution required).</p>
+        </footer>
+    </div>
+</body>
+</html>
