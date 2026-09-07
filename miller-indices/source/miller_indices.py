@@ -285,9 +285,40 @@ def _(mo):
 
 @app.cell
 def _(go, mo, np):
+    def miller_plain_index(n):
+        if n < 0:
+            return f"{abs(int(n))}\u0305"
+        return str(int(n))
+
+    def miller_plain(h, k, l, kind="plane"):
+        s = miller_plain_index(h) + miller_plain_index(k) + miller_plain_index(l)
+        return f"({s})" if kind == "plane" else f"[{s}]"
+
+    def miller_tex_index(n):
+        if n < 0:
+            return rf"\bar{{{abs(int(n))}}}"
+        return str(int(n))
+
+    def miller_tex(h, k, l, kind="plane"):
+        s = miller_tex_index(h) + miller_tex_index(k) + miller_tex_index(l)
+        return rf"({s})" if kind == "plane" else rf"[{s}]"
+
+    def miller_html_index(n):
+        if n < 0:
+            return (
+                f"<span style='text-decoration:overline'>{abs(int(n))}</span>"
+            )
+        return str(int(n))
+
+    def miller_html(h, k, l, kind="plane"):
+        s = miller_html_index(h) + miller_html_index(k) + miller_html_index(l)
+        return f"({s})" if kind == "plane" else f"[{s}]"
+
     def plot_miller_plane(h, k, l):
         """Plot the Miller plane in a unit cell by showing intercepts."""
         fig_miller = go.Figure()
+        plane_label = miller_plain(h, k, l, "plane")
+        dir_label = miller_plain(h, k, l, "direction")
 
         cube_edges = [
             ([0, 1], [0, 0], [0, 0]),
@@ -449,7 +480,7 @@ def _(go, mo, np):
                         k=[2],
                         opacity=0.6,
                         color="cyan",
-                        name=f"({h}{k}{l}) plane",
+                        name=f"{plane_label} plane",
                         showlegend=True,
                     )
                 )
@@ -501,7 +532,7 @@ def _(go, mo, np):
                         k=[2, 3],
                         opacity=0.6,
                         color="cyan",
-                        name=f"({h}{k}{l}) plane",
+                        name=f"{plane_label} plane",
                         showlegend=True,
                     )
                 )
@@ -550,7 +581,7 @@ def _(go, mo, np):
                         k=[2, 3],
                         opacity=0.6,
                         color="cyan",
-                        name=f"({h}{k}{l}) plane",
+                        name=f"{plane_label} plane",
                         showlegend=True,
                     )
                 )
@@ -567,7 +598,7 @@ def _(go, mo, np):
                         z=[center[2], center[2] + normal_unit[2]],
                         mode="lines",
                         line=dict(color="magenta", width=5),
-                        name=f"Normal [{h}{k}{l}]",
+                        name=f"Normal {dir_label}",
                     )
                 )
                 fig_miller.add_trace(
@@ -588,7 +619,10 @@ def _(go, mo, np):
 
         if h != 0 or k != 0 or l != 0:
             d_spacing = 1.0 / np.sqrt(h**2 + k**2 + l**2)
-            title_text = f"Plane ({h}{k}{l}) | Interplane spacing = {d_spacing:.3f}a"
+            title_text = (
+                f"Plane {miller_html(h, k, l, 'plane')} | "
+                f"Interplane spacing = {d_spacing:.3f}a"
+            )
         else:
             title_text = "Miller Plane Calculator"
 
@@ -613,11 +647,11 @@ def _(go, mo, np):
     h_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="h")
     k_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="k")
     l_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="l")
-    return h_input, k_input, l_input, plot_miller_plane
+    return h_input, k_input, l_input, miller_tex, plot_miller_plane
 
 
 @app.cell
-def _(h_input, k_input, l_input, mo, plot_miller_plane):
+def _(h_input, k_input, l_input, miller_tex, mo, plot_miller_plane):
     _h = h_input.value
     _k = k_input.value
     _l = l_input.value
@@ -631,10 +665,12 @@ def _(h_input, k_input, l_input, mo, plot_miller_plane):
         _info = mo.md("**(000) is not a valid Miller index.**")
     else:
         _d = 1.0 / (_h**2 + _k**2 + _l**2) ** 0.5
+        _plane = miller_tex(_h, _k, _l, "plane")
+        _dir = miller_tex(_h, _k, _l, "direction")
         _info = mo.md(
             rf"""
     Intercepts: $x={_int_str(_h)}$, $y={_int_str(_k)}$, $z={_int_str(_l)}$.  
-    Reciprocals $\to$ plane $({_h}{_k}{_l})$. Magenta arrow: cubic normal $[{_h}{_k}{_l}]$.  
+    Reciprocals $\to$ plane ${_plane}$. Magenta arrow: cubic normal ${_dir}$.  
     $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
