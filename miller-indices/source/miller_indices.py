@@ -292,7 +292,11 @@ def _(go, mo, np):
 
     def miller_plain(h, k, l, kind="plane"):
         s = miller_plain_index(h) + miller_plain_index(k) + miller_plain_index(l)
-        return f"({s})" if kind == "plane" else f"[{s}]"
+        if kind == "plane":
+            return f"({s})"
+        if kind == "family":
+            return f"\u27e8{s}\u27e9"
+        return f"[{s}]"
 
     def miller_tex_index(n):
         if n < 0:
@@ -301,7 +305,11 @@ def _(go, mo, np):
 
     def miller_tex(h, k, l, kind="plane"):
         s = miller_tex_index(h) + miller_tex_index(k) + miller_tex_index(l)
-        return rf"({s})" if kind == "plane" else rf"[{s}]"
+        if kind == "plane":
+            return rf"({s})"
+        if kind == "family":
+            return rf"\langle{s}\rangle"
+        return rf"[{s}]"
 
     def miller_html_index(n):
         if n < 0:
@@ -312,7 +320,11 @@ def _(go, mo, np):
 
     def miller_html(h, k, l, kind="plane"):
         s = miller_html_index(h) + miller_html_index(k) + miller_html_index(l)
-        return f"({s})" if kind == "plane" else f"[{s}]"
+        if kind == "plane":
+            return f"({s})"
+        if kind == "family":
+            return f"&langle;{s}&rangle;"
+        return f"[{s}]"
 
     def plot_miller_plane(h, k, l):
         """Plot the Miller plane in a unit cell by showing intercepts."""
@@ -686,6 +698,246 @@ def _(h_input, k_input, l_input, miller_tex, mo, plot_miller_plane):
             plot_miller_plane(_h, _k, _l),
         ],
         align="center",
+    )
+    return
+
+
+@app.cell
+def _(miller_tex, mo, np, plt):
+    DIAMOND_BASIS = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [0.5, 0.5, 0.0],
+            [0.5, 0.0, 0.5],
+            [0.0, 0.5, 0.5],
+            [0.25, 0.25, 0.25],
+            [0.75, 0.75, 0.25],
+            [0.75, 0.25, 0.75],
+            [0.25, 0.75, 0.75],
+        ]
+    )
+    SI_NN = np.sqrt(3.0) / 4.0
+
+    def _unique_points(pts, decimals=8):
+        _rounded = np.round(np.asarray(pts, dtype=float), decimals=decimals)
+        _, _idx = np.unique(_rounded, axis=0, return_index=True)
+        return np.asarray(pts, dtype=float)[np.sort(_idx)]
+
+    def _canon_vec(v):
+        _v = np.array(v, dtype=float)
+        for _c in _v:
+            if abs(_c) > 1e-12:
+                return _v if _c > 0 else -_v
+        return _v
+
+    def in_plane_lattice_vectors(h, k, l):
+        _n = np.array([int(h), int(k), int(l)], dtype=int)
+        _seen = set()
+        _vecs = []
+        for _x in range(-3, 4):
+            for _y in range(-3, 4):
+                for _z in range(-3, 4):
+                    _v = np.array([_x, _y, _z], dtype=int)
+                    if np.all(_v == 0) or int(_n @ _v) != 0:
+                        continue
+                    _g = int(np.gcd.reduce(np.abs(_v)))
+                    _v = (_v // _g).astype(int)
+                    _key = tuple(_v.tolist())
+                    if _key not in _seen:
+                        _seen.add(_key)
+                        _vecs.append(_v)
+        _vecs.sort(key=lambda t: (int(t @ t), tuple(t.tolist())))
+        _v1 = _canon_vec(_vecs[0])
+        _v2 = None
+        for _v in _vecs[1:]:
+            _vc = _canon_vec(_v)
+            if np.linalg.norm(np.cross(_v1, _vc)) > 0.5:
+                _v2 = _vc
+                break
+        if np.dot(np.cross(_v1, _v2), _n.astype(float)) < 0:
+            _v2 = -_v2
+        return _v1, _v2
+
+    def plot_silicon_view(h, k, l):
+        _v1, _v2 = in_plane_lattice_vectors(h, k, l)
+        _n = np.array([h, k, l], dtype=float)
+        _n_hat = _n / np.linalg.norm(_n)
+        _M = np.column_stack([_v1, _v2, _n_hat])
+        _pts = []
+        for _i in range(3):
+            for _j in range(3):
+                _origin = _i * _v1 + _j * _v2
+                for _b in DIAMOND_BASIS:
+                    _pts.append(_origin + _b)
+        _pts = _unique_points(_pts)
+        _keep = []
+        for _r in _pts:
+            _a, _b, _d = np.linalg.solve(_M, _r)
+            if -1e-6 <= _a <= 2.0 + 1e-6 and -1e-6 <= _b <= 2.0 + 1e-6:
+                _keep.append(_r)
+        _pts = np.array(_keep)
+        _u = _v1 / np.linalg.norm(_v1)
+        _w = _v2 - np.dot(_v2, _u) * _u
+        _vax = _w / np.linalg.norm(_w)
+        if np.dot(np.cross(_u, _vax), _n_hat) < 0:
+            _vax = -_vax
+        _xy = np.column_stack([_pts @ _u, _pts @ _vax])
+        _depth = _pts @ _n_hat
+        _front = np.min(np.round(_depth, 6))
+        _on = np.abs(_depth - _front) < 1e-4
+
+        _fig, _ax = plt.subplots(figsize=(6.8, 6.8))
+        for _i in range(len(_pts)):
+            for _j in range(_i + 1, len(_pts)):
+                if abs(np.linalg.norm(_pts[_i] - _pts[_j]) - SI_NN) < 0.05:
+                    _ax.plot(
+                        [_xy[_i, 0], _xy[_j, 0]],
+                        [_xy[_i, 1], _xy[_j, 1]],
+                        color="#c8c8c8",
+                        lw=1.2,
+                        zorder=1,
+                        solid_capstyle="round",
+                    )
+        for _i in range(2):
+            for _j in range(2):
+                _corners = np.array(
+                    [
+                        _i * _v1 + _j * _v2,
+                        (_i + 1) * _v1 + _j * _v2,
+                        (_i + 1) * _v1 + (_j + 1) * _v2,
+                        _i * _v1 + (_j + 1) * _v2,
+                        _i * _v1 + _j * _v2,
+                    ]
+                )
+                _ax.plot(
+                    _corners @ _u,
+                    _corners @ _vax,
+                    linestyle=(0, (5, 4)),
+                    color="#444444",
+                    lw=1.4,
+                    zorder=2,
+                )
+        _ax.scatter(
+            _xy[~_on, 0],
+            _xy[~_on, 1],
+            s=150,
+            facecolors="white",
+            edgecolors="#D55E00",
+            linewidths=2.0,
+            zorder=3,
+            label="Behind (further back)",
+        )
+        _ax.scatter(
+            _xy[_on, 0],
+            _xy[_on, 1],
+            s=190,
+            c="#0072B2",
+            edgecolors="black",
+            linewidths=0.6,
+            zorder=4,
+            label=rf"On the ${miller_tex(h, k, l, 'plane')}$ plane",
+        )
+        _dir = miller_tex(h, k, l, "family")
+        _in1 = miller_tex(
+            int(round(_v1[0])), int(round(_v1[1])), int(round(_v1[2])), "direction"
+        )
+        _in2 = miller_tex(
+            int(round(_v2[0])), int(round(_v2[1])), int(round(_v2[2])), "direction"
+        )
+        _ax.set_aspect("equal")
+        if abs(np.dot(_v1, _v2)) < 1e-8:
+            _ax.set_xlabel(rf"${_in1}$  (units of $a$)", fontsize=16)
+            _ax.set_ylabel(rf"${_in2}$  (units of $a$)", fontsize=16)
+        else:
+            _ax.set_xlabel(r"in-plane (units of $a$)", fontsize=16)
+            _ax.set_ylabel(r"in-plane (units of $a$)", fontsize=16)
+
+            def _label_edge(_p0, _p1, _text):
+                _mid = 0.5 * (_p0 + _p1)
+                _edge = _p1 - _p0
+                _nrm = np.array([-_edge[1], _edge[0]], dtype=float)
+                _nrm = _nrm / (np.linalg.norm(_nrm) + 1e-12)
+                _cell = np.array(
+                    [0.5 * (_v1 + _v2) @ _u, 0.5 * (_v1 + _v2) @ _vax]
+                )
+                if np.dot(_nrm, _cell - _mid) > 0:
+                    _nrm = -_nrm
+                _pos = _mid + 0.16 * _nrm
+                _ax.text(
+                    _pos[0],
+                    _pos[1],
+                    _text,
+                    fontsize=16,
+                    ha="center",
+                    va="center",
+                )
+
+            _label_edge(
+                np.array([0.0, 0.0]),
+                np.array([_v1 @ _u, _v1 @ _vax]),
+                rf"${_in1}$",
+            )
+            _label_edge(
+                np.array([0.0, 0.0]),
+                np.array([_v2 @ _u, _v2 @ _vax]),
+                rf"${_in2}$",
+            )
+        _ax.tick_params(labelsize=16)
+        _ax.set_title(
+            rf"Si (diamond), viewed along ${_dir}$",
+            fontsize=16,
+            pad=10,
+        )
+        _ax.legend(
+            frameon=False,
+            fontsize=16,
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.14),
+            ncol=2,
+        )
+        _ax.spines["top"].set_visible(False)
+        _ax.spines["right"].set_visible(False)
+        _fig.tight_layout()
+        return _fig
+
+    si_h = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="h")
+    si_k = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="k")
+    si_l = mo.ui.slider(value=0, start=-2, stop=2, step=1, label="l")
+    return plot_silicon_view, si_h, si_k, si_l
+
+
+@app.cell
+def _(miller_tex, mo, plot_silicon_view, si_h, si_k, si_l):
+    _h = si_h.value
+    _k = si_k.value
+    _l = si_l.value
+    if _h == 0 and _k == 0 and _l == 0:
+        _body = mo.md(r"**$\langle 000\rangle$ is not a valid direction.**")
+    else:
+        _dir = miller_tex(_h, _k, _l, "family")
+        _plane = miller_tex(_h, _k, _l, "plane")
+        _info = mo.md(
+            rf"""
+    Viewing along ${_dir}$. In cubic Si that faces the plane ${_plane}$.  
+    Filled circles: atoms on that plane. Open circles: atoms further back.  
+    Dashed lines: conventional cubic cell edges (2×2 cells).
+    """
+        )
+        _body = mo.vstack([_info, plot_silicon_view(_h, _k, _l)], gap=0.4)
+
+    mo.vstack(
+        [
+            mo.md("## Silicon crystallographic directions"),
+            mo.md(
+                r"""
+    Silicon is diamond cubic. Choose a viewing direction $\langle hkl\rangle$
+    (angle brackets) to look into the crystal. Because Si is cubic, $\langle hkl\rangle$
+    is perpendicular to $(hkl)$: you are looking at that plane.
+    """
+            ),
+            mo.hstack([si_h, si_k, si_l], justify="start", gap=2),
+            _body,
+        ]
     )
     return
 
