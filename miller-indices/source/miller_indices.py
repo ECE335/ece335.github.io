@@ -659,7 +659,15 @@ def _(go, mo, np):
     h_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="h")
     k_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="k")
     l_input = mo.ui.slider(value=1, start=-3, stop=3, step=1, label="l")
-    return h_input, k_input, l_input, miller_tex, plot_miller_plane
+    return (
+        h_input,
+        k_input,
+        l_input,
+        miller_html,
+        miller_plain,
+        miller_tex,
+        plot_miller_plane,
+    )
 
 
 @app.cell
@@ -703,7 +711,7 @@ def _(h_input, k_input, l_input, miller_tex, mo, plot_miller_plane):
 
 
 @app.cell
-def _(miller_tex, mo, np, plt):
+def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
     DIAMOND_BASIS = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -944,17 +952,327 @@ def _(miller_tex, mo, np, plt):
         _fig.tight_layout()
         return _fig
 
+    def diamond_fcc_unit_cell():
+        _corners = np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 0.0, 1.0],
+                [0.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0],
+            ]
+        )
+        _faces = np.array(
+            [
+                [0.5, 0.5, 0.0],
+                [0.5, 0.5, 1.0],
+                [0.5, 0.0, 0.5],
+                [0.5, 1.0, 0.5],
+                [0.0, 0.5, 0.5],
+                [1.0, 0.5, 0.5],
+            ]
+        )
+        _fcc1 = _unique_points(np.vstack([_corners, _faces]))
+        _fcc2 = _fcc1 + np.array([0.25, 0.25, 0.25])
+        _fcc2 = _fcc2[np.all((_fcc2 >= -1e-8) & (_fcc2 <= 1.0 + 1e-8), axis=1)]
+        return _fcc1, _unique_points(_fcc2)
+
+    def miller_plane_vertices(h, k, l):
+        _x_int = 1.0 / h if h != 0 else None
+        _y_int = 1.0 / k if k != 0 else None
+        _z_int = 1.0 / l if l != 0 else None
+        _intercepts = []
+        if _x_int is not None and -2 <= _x_int <= 2:
+            _intercepts.append([_x_int, 0.0, 0.0])
+        if _y_int is not None and -2 <= _y_int <= 2:
+            _intercepts.append([0.0, _y_int, 0.0])
+        if _z_int is not None and -2 <= _z_int <= 2:
+            _intercepts.append([0.0, 0.0, _z_int])
+        if len(_intercepts) == 3:
+            return np.array(_intercepts)
+        if len(_intercepts) == 2:
+            _p1, _p2 = _intercepts
+            if h == 0:
+                return np.array(
+                    [
+                        [_p1[0] - 2, _p1[1], _p1[2]],
+                        [_p1[0] + 2, _p1[1], _p1[2]],
+                        [_p2[0] + 2, _p2[1], _p2[2]],
+                        [_p2[0] - 2, _p2[1], _p2[2]],
+                    ]
+                )
+            if k == 0:
+                return np.array(
+                    [
+                        [_p1[0], _p1[1] - 2, _p1[2]],
+                        [_p1[0], _p1[1] + 2, _p1[2]],
+                        [_p2[0], _p2[1] + 2, _p2[2]],
+                        [_p2[0], _p2[1] - 2, _p2[2]],
+                    ]
+                )
+            return np.array(
+                [
+                    [_p1[0], _p1[1], _p1[2] - 2],
+                    [_p1[0], _p1[1], _p1[2] + 2],
+                    [_p2[0], _p2[1], _p2[2] + 2],
+                    [_p2[0], _p2[1], _p2[2] - 2],
+                ]
+            )
+        if len(_intercepts) == 1:
+            _p = _intercepts[0]
+            if h != 0:
+                return np.array(
+                    [
+                        [_p[0], -2, -2],
+                        [_p[0], 2, -2],
+                        [_p[0], 2, 2],
+                        [_p[0], -2, 2],
+                    ]
+                )
+            if k != 0:
+                return np.array(
+                    [
+                        [-2, _p[1], -2],
+                        [2, _p[1], -2],
+                        [2, _p[1], 2],
+                        [-2, _p[1], 2],
+                    ]
+                )
+            return np.array(
+                [
+                    [-2, -2, _p[2]],
+                    [2, -2, _p[2]],
+                    [2, 2, _p[2]],
+                    [-2, 2, _p[2]],
+                ]
+            )
+        return np.zeros((0, 3))
+
+    def plot_silicon_3d(h, k, l, show_fcc1, show_fcc2):
+        _fig = go.Figure()
+        _plane_label = miller_plain(h, k, l, "plane")
+        _cube_edges = [
+            ([0, 1], [0, 0], [0, 0]),
+            ([0, 0], [0, 1], [0, 0]),
+            ([0, 0], [0, 0], [0, 1]),
+            ([1, 1], [0, 1], [0, 0]),
+            ([1, 1], [0, 0], [0, 1]),
+            ([0, 1], [1, 1], [0, 0]),
+            ([0, 0], [1, 1], [0, 1]),
+            ([0, 1], [0, 0], [1, 1]),
+            ([0, 0], [0, 1], [1, 1]),
+            ([1, 1], [1, 1], [0, 1]),
+            ([1, 1], [0, 1], [1, 1]),
+            ([0, 1], [1, 1], [1, 1]),
+        ]
+        for _edge in _cube_edges:
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=_edge[0],
+                    y=_edge[1],
+                    z=_edge[2],
+                    mode="lines",
+                    line=dict(color="black", width=3),
+                    showlegend=False,
+                    hoverinfo="skip",
+                )
+            )
+        for _axis, _color, _label, _end in (
+            (([-0.2, 1.3], [0, 0], [0, 0]), "red", "x", [1.4, 0, 0]),
+            (([0, 0], [-0.2, 1.3], [0, 0]), "green", "y", [0, 1.4, 0]),
+            (([0, 0], [0, 0], [-0.2, 1.3]), "blue", "z", [0, 0, 1.4]),
+        ):
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=_axis[0],
+                    y=_axis[1],
+                    z=_axis[2],
+                    mode="lines",
+                    line=dict(color=_color, width=4),
+                    showlegend=False,
+                    hoverinfo="skip",
+                )
+            )
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=[_end[0]],
+                    y=[_end[1]],
+                    z=[_end[2]],
+                    mode="text",
+                    text=[_label],
+                    textfont=dict(size=14, color=_color),
+                    showlegend=False,
+                )
+            )
+
+        _verts = miller_plane_vertices(h, k, l)
+        if len(_verts) == 3:
+            _fig.add_trace(
+                go.Mesh3d(
+                    x=_verts[:, 0],
+                    y=_verts[:, 1],
+                    z=_verts[:, 2],
+                    i=[0],
+                    j=[1],
+                    k=[2],
+                    opacity=0.35,
+                    color="cyan",
+                    name=f"{_plane_label} plane",
+                    showlegend=True,
+                )
+            )
+        elif len(_verts) == 4:
+            _fig.add_trace(
+                go.Mesh3d(
+                    x=_verts[:, 0],
+                    y=_verts[:, 1],
+                    z=_verts[:, 2],
+                    i=[0, 0],
+                    j=[1, 2],
+                    k=[2, 3],
+                    opacity=0.35,
+                    color="cyan",
+                    name=f"{_plane_label} plane",
+                    showlegend=True,
+                )
+            )
+        if len(_verts) >= 3:
+            _closed = np.vstack([_verts, _verts[0]])
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=_closed[:, 0],
+                    y=_closed[:, 1],
+                    z=_closed[:, 2],
+                    mode="lines",
+                    line=dict(color="darkblue", width=4),
+                    showlegend=False,
+                    hoverinfo="skip",
+                )
+            )
+
+        _fcc1, _fcc2 = diamond_fcc_unit_cell()
+        _N1 = h * _fcc1[:, 0] + k * _fcc1[:, 1] + l * _fcc1[:, 2]
+        _N2 = h * _fcc2[:, 0] + k * _fcc2[:, 1] + l * _fcc2[:, 2]
+        _on1 = np.abs(_N1 - 1.0) < 1e-6
+        _on2 = np.abs(_N2 - 1.0) < 1e-6
+
+        def _add_atoms(_pts, _on, _color, _name):
+            _off = ~_on
+            if np.any(_off):
+                _p = _pts[_off]
+                _fig.add_trace(
+                    go.Scatter3d(
+                        x=_p[:, 0],
+                        y=_p[:, 1],
+                        z=_p[:, 2],
+                        mode="markers",
+                        marker=dict(
+                            size=7,
+                            color=_color,
+                            opacity=0.4,
+                            line=dict(width=0.5, color=_color),
+                        ),
+                        name=f"{_name} (off plane)",
+                    )
+                )
+            if np.any(_on):
+                _p = _pts[_on]
+                _fig.add_trace(
+                    go.Scatter3d(
+                        x=_p[:, 0],
+                        y=_p[:, 1],
+                        z=_p[:, 2],
+                        mode="markers",
+                        marker=dict(
+                            size=11,
+                            color=_color,
+                            opacity=1.0,
+                            line=dict(width=1.5, color="black"),
+                        ),
+                        name=f"{_name} on {_plane_label}",
+                    )
+                )
+
+        if show_fcc1:
+            _add_atoms(_fcc1, _on1, "#0072B2", "FCC 1")
+        if show_fcc2:
+            _add_atoms(_fcc2, _on2, "#D55E00", "FCC 2")
+        if show_fcc1 and show_fcc2:
+            for _p1 in _fcc2:
+                for _p2 in _fcc1:
+                    if abs(np.linalg.norm(_p1 - _p2) - SI_NN) < 1e-6:
+                        _fig.add_trace(
+                            go.Scatter3d(
+                                x=[_p1[0], _p2[0]],
+                                y=[_p1[1], _p2[1]],
+                                z=[_p1[2], _p2[2]],
+                                mode="lines",
+                                line=dict(color="#888888", width=3),
+                                showlegend=False,
+                                hoverinfo="skip",
+                            )
+                        )
+
+        _fig.update_layout(
+            title=dict(
+                text=(
+                    f"Si diamond cell | plane {miller_html(h, k, l, 'plane')}"
+                    " | Drag to rotate"
+                ),
+                x=0.5,
+            ),
+            scene=dict(
+                xaxis_title="x [a]",
+                yaxis_title="y [a]",
+                zaxis_title="z [a]",
+                aspectmode="cube",
+                camera=dict(eye=dict(x=1.8, y=1.8, z=1.2)),
+                xaxis=dict(range=[-0.5, 1.5]),
+                yaxis=dict(range=[-0.5, 1.5]),
+                zaxis=dict(range=[-0.5, 1.5]),
+            ),
+            legend=dict(
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=0.01,
+                itemclick="toggle",
+                itemdoubleclick="toggleothers",
+            ),
+            height=600,
+            width=700,
+            margin=dict(l=0, r=0, t=50, b=0),
+        )
+        return _fig
+
     si_h = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="h")
     si_k = mo.ui.slider(value=1, start=-2, stop=2, step=1, label="k")
     si_l = mo.ui.slider(value=0, start=-2, stop=2, step=1, label="l")
-    return plot_silicon_view, si_h, si_k, si_l, silicon_view_geometry
+    si_fcc1 = mo.ui.checkbox(value=True, label="FCC 1 (corners and face centers)")
+    si_fcc2 = mo.ui.checkbox(value=True, label="FCC 2 (offset by a/4)")
+    return (
+        plot_silicon_3d,
+        plot_silicon_view,
+        si_fcc1,
+        si_fcc2,
+        si_h,
+        si_k,
+        si_l,
+        silicon_view_geometry,
+    )
 
 
 @app.cell
 def _(
     miller_tex,
     mo,
+    plot_silicon_3d,
     plot_silicon_view,
+    si_fcc1,
+    si_fcc2,
     si_h,
     si_k,
     si_l,
@@ -987,7 +1305,22 @@ def _(
     planes further back (open). Spacing $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
-        _body = mo.vstack([_info, plot_silicon_view(_geom)], gap=0.4)
+        _body = mo.vstack(
+            [
+                _info,
+                plot_silicon_view(_geom),
+                mo.md(
+                    r"""
+    **3D conventional cell.** Same $(hkl)$ plane as above, drawn in one cubic
+    cell of diamond Si ($hx+ky+lz = 1$). Solid atoms lie on that plane; faded
+    atoms do not. Toggle each FCC sublattice.
+    """
+                ),
+                mo.hstack([si_fcc1, si_fcc2], justify="start", gap=2),
+                plot_silicon_3d(_h, _k, _l, si_fcc1.value, si_fcc2.value),
+            ],
+            gap=0.4,
+        )
 
     mo.vstack(
         [
