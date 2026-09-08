@@ -725,6 +725,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         ]
     )
     SI_NN = np.sqrt(3.0) / 4.0
+    SI_N_CELLS = 2
 
     def _unique_points(pts, decimals=8):
         _rounded = np.round(np.asarray(pts, dtype=float), decimals=decimals)
@@ -849,7 +850,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _vax = geom["vax"]
         _h, _k, _l = geom["h"], geom["k"], geom["l"]
 
-        _fig, _ax = plt.subplots(figsize=(6.8, 6.8))
+        _fig, _ax = plt.subplots(figsize=(5.2, 5.2))
         for _i in range(len(_pts)):
             for _j in range(_i + 1, len(_pts)):
                 if abs(np.linalg.norm(_pts[_i] - _pts[_j]) - SI_NN) < 1e-6:
@@ -952,7 +953,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _fig.tight_layout()
         return _fig
 
-    def diamond_fcc_unit_cell():
+    def diamond_fcc_cells(n_cells=SI_N_CELLS):
         _corners = np.array(
             [
                 [0.0, 0.0, 0.0],
@@ -975,115 +976,100 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 [1.0, 0.5, 0.5],
             ]
         )
-        _fcc1 = _unique_points(np.vstack([_corners, _faces]))
+        _fcc1_list = []
+        for _ix in range(n_cells):
+            for _iy in range(n_cells):
+                for _iz in range(n_cells):
+                    _shift = np.array([_ix, _iy, _iz], dtype=float)
+                    _fcc1_list.append(_corners + _shift)
+                    _fcc1_list.append(_faces + _shift)
+        _fcc1 = _unique_points(np.vstack(_fcc1_list))
         _fcc2 = _fcc1 + np.array([0.25, 0.25, 0.25])
-        _fcc2 = _fcc2[np.all((_fcc2 >= -1e-8) & (_fcc2 <= 1.0 + 1e-8), axis=1)]
+        _lim = float(n_cells)
+        _fcc2 = _fcc2[np.all((_fcc2 >= -1e-8) & (_fcc2 <= _lim + 1e-8), axis=1)]
         return _fcc1, _unique_points(_fcc2)
 
-    def miller_plane_vertices(h, k, l):
-        _x_int = 1.0 / h if h != 0 else None
-        _y_int = 1.0 / k if k != 0 else None
-        _z_int = 1.0 / l if l != 0 else None
-        _intercepts = []
-        if _x_int is not None and -2 <= _x_int <= 2:
-            _intercepts.append([_x_int, 0.0, 0.0])
-        if _y_int is not None and -2 <= _y_int <= 2:
-            _intercepts.append([0.0, _y_int, 0.0])
-        if _z_int is not None and -2 <= _z_int <= 2:
-            _intercepts.append([0.0, 0.0, _z_int])
-        if len(_intercepts) == 3:
-            return np.array(_intercepts)
-        if len(_intercepts) == 2:
-            _p1, _p2 = _intercepts
-            if h == 0:
-                return np.array(
-                    [
-                        [_p1[0] - 2, _p1[1], _p1[2]],
-                        [_p1[0] + 2, _p1[1], _p1[2]],
-                        [_p2[0] + 2, _p2[1], _p2[2]],
-                        [_p2[0] - 2, _p2[1], _p2[2]],
-                    ]
-                )
-            if k == 0:
-                return np.array(
-                    [
-                        [_p1[0], _p1[1] - 2, _p1[2]],
-                        [_p1[0], _p1[1] + 2, _p1[2]],
-                        [_p2[0], _p2[1] + 2, _p2[2]],
-                        [_p2[0], _p2[1] - 2, _p2[2]],
-                    ]
-                )
-            return np.array(
-                [
-                    [_p1[0], _p1[1], _p1[2] - 2],
-                    [_p1[0], _p1[1], _p1[2] + 2],
-                    [_p2[0], _p2[1], _p2[2] + 2],
-                    [_p2[0], _p2[1], _p2[2] - 2],
-                ]
-            )
-        if len(_intercepts) == 1:
-            _p = _intercepts[0]
-            if h != 0:
-                return np.array(
-                    [
-                        [_p[0], -2, -2],
-                        [_p[0], 2, -2],
-                        [_p[0], 2, 2],
-                        [_p[0], -2, 2],
-                    ]
-                )
-            if k != 0:
-                return np.array(
-                    [
-                        [-2, _p[1], -2],
-                        [2, _p[1], -2],
-                        [2, _p[1], 2],
-                        [-2, _p[1], 2],
-                    ]
-                )
-            return np.array(
-                [
-                    [-2, -2, _p[2]],
-                    [2, -2, _p[2]],
-                    [2, 2, _p[2]],
-                    [-2, 2, _p[2]],
-                ]
-            )
-        return np.zeros((0, 3))
+    def plane_box_vertices(h, k, l, C=1.0, box=SI_N_CELLS):
+        _n = np.array([h, k, l], dtype=float)
+        _corners = np.array(
+            [
+                [_x, _y, _z]
+                for _x in (0.0, box)
+                for _y in (0.0, box)
+                for _z in (0.0, box)
+            ]
+        )
+        _pts = []
+        for _i in range(8):
+            for _j in range(_i + 1, 8):
+                _d = _corners[_j] - _corners[_i]
+                if np.count_nonzero(np.abs(_d) > 1e-12) != 1:
+                    continue
+                _n0 = float(_n @ _corners[_i] - C)
+                _n1 = float(_n @ _corners[_j] - C)
+                if _n0 * _n1 > 1e-14:
+                    continue
+                if abs(_n0) < 1e-12 and abs(_n1) < 1e-12:
+                    _pts.append(_corners[_i])
+                    _pts.append(_corners[_j])
+                    continue
+                _den = _n0 - _n1
+                if abs(_den) < 1e-14:
+                    continue
+                _t = np.clip(_n0 / _den, 0.0, 1.0)
+                _pts.append(_corners[_i] + _t * _d)
+        if len(_pts) == 0:
+            return np.zeros((0, 3))
+        _pts = _unique_points(_pts)
+        if len(_pts) < 3:
+            return _pts
+        _centroid = _pts.mean(axis=0)
+        _n_hat = _n / (np.linalg.norm(_n) + 1e-15)
+        _tmp = (
+            np.array([1.0, 0.0, 0.0])
+            if abs(_n_hat[0]) < 0.9
+            else np.array([0.0, 1.0, 0.0])
+        )
+        _u = np.cross(_n_hat, _tmp)
+        _u = _u / np.linalg.norm(_u)
+        _v = np.cross(_n_hat, _u)
+        _rel = _pts - _centroid
+        _ang = np.arctan2(_rel @ _v, _rel @ _u)
+        return _pts[np.argsort(_ang)]
 
     def plot_silicon_3d(h, k, l, show_fcc1, show_fcc2):
         _fig = go.Figure()
         _plane_label = miller_plain(h, k, l, "plane")
-        _cube_edges = [
-            ([0, 1], [0, 0], [0, 0]),
-            ([0, 0], [0, 1], [0, 0]),
-            ([0, 0], [0, 0], [0, 1]),
-            ([1, 1], [0, 1], [0, 0]),
-            ([1, 1], [0, 0], [0, 1]),
-            ([0, 1], [1, 1], [0, 0]),
-            ([0, 0], [1, 1], [0, 1]),
-            ([0, 1], [0, 0], [1, 1]),
-            ([0, 0], [0, 1], [1, 1]),
-            ([1, 1], [1, 1], [0, 1]),
-            ([1, 1], [0, 1], [1, 1]),
-            ([0, 1], [1, 1], [1, 1]),
-        ]
-        for _edge in _cube_edges:
-            _fig.add_trace(
-                go.Scatter3d(
-                    x=_edge[0],
-                    y=_edge[1],
-                    z=_edge[2],
-                    mode="lines",
-                    line=dict(color="black", width=3),
-                    showlegend=False,
-                    hoverinfo="skip",
-                )
+        _n = SI_N_CELLS
+        _xs, _ys, _zs = [], [], []
+        for _a in range(_n + 1):
+            for _b in range(_n + 1):
+                for _c in range(_n):
+                    _xs.extend([_c, _c + 1, None])
+                    _ys.extend([_a, _a, None])
+                    _zs.extend([_b, _b, None])
+                    _xs.extend([_a, _a, None])
+                    _ys.extend([_c, _c + 1, None])
+                    _zs.extend([_b, _b, None])
+                    _xs.extend([_a, _a, None])
+                    _ys.extend([_b, _b, None])
+                    _zs.extend([_c, _c + 1, None])
+        _fig.add_trace(
+            go.Scatter3d(
+                x=_xs,
+                y=_ys,
+                z=_zs,
+                mode="lines",
+                line=dict(color="#444444", width=2, dash="dash"),
+                name="Unit cells",
+                hoverinfo="skip",
             )
-        for _axis, _color, _label, _end in (
-            (([-0.2, 1.3], [0, 0], [0, 0]), "red", "x", [1.4, 0, 0]),
-            (([0, 0], [-0.2, 1.3], [0, 0]), "green", "y", [0, 1.4, 0]),
-            (([0, 0], [0, 0], [-0.2, 1.3]), "blue", "z", [0, 0, 1.4]),
+        )
+        _end = float(_n) + 0.35
+        for _axis, _color, _label, _txt in (
+            (([-0.25, _end], [0, 0], [0, 0]), "red", "x", [_end + 0.1, 0, 0]),
+            (([0, 0], [-0.25, _end], [0, 0]), "green", "y", [0, _end + 0.1, 0]),
+            (([0, 0], [0, 0], [-0.25, _end]), "blue", "z", [0, 0, _end + 0.1]),
         ):
             _fig.add_trace(
                 go.Scatter3d(
@@ -1098,9 +1084,9 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             )
             _fig.add_trace(
                 go.Scatter3d(
-                    x=[_end[0]],
-                    y=[_end[1]],
-                    z=[_end[2]],
+                    x=[_txt[0]],
+                    y=[_txt[1]],
+                    z=[_txt[2]],
                     mode="text",
                     text=[_label],
                     textfont=dict(size=14, color=_color),
@@ -1108,38 +1094,23 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 )
             )
 
-        _verts = miller_plane_vertices(h, k, l)
-        if len(_verts) == 3:
-            _fig.add_trace(
-                go.Mesh3d(
-                    x=_verts[:, 0],
-                    y=_verts[:, 1],
-                    z=_verts[:, 2],
-                    i=[0],
-                    j=[1],
-                    k=[2],
-                    opacity=0.35,
-                    color="cyan",
-                    name=f"{_plane_label} plane",
-                    showlegend=True,
-                )
-            )
-        elif len(_verts) == 4:
-            _fig.add_trace(
-                go.Mesh3d(
-                    x=_verts[:, 0],
-                    y=_verts[:, 1],
-                    z=_verts[:, 2],
-                    i=[0, 0],
-                    j=[1, 2],
-                    k=[2, 3],
-                    opacity=0.35,
-                    color="cyan",
-                    name=f"{_plane_label} plane",
-                    showlegend=True,
-                )
-            )
+        _verts = plane_box_vertices(h, k, l, C=1.0, box=float(_n))
         if len(_verts) >= 3:
+            _nvert = len(_verts)
+            _fig.add_trace(
+                go.Mesh3d(
+                    x=_verts[:, 0],
+                    y=_verts[:, 1],
+                    z=_verts[:, 2],
+                    i=[0] * (_nvert - 2),
+                    j=list(range(1, _nvert - 1)),
+                    k=list(range(2, _nvert)),
+                    opacity=0.35,
+                    color="cyan",
+                    name=f"{_plane_label} plane",
+                    showlegend=True,
+                )
+            )
             _closed = np.vstack([_verts, _verts[0]])
             _fig.add_trace(
                 go.Scatter3d(
@@ -1153,7 +1124,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 )
             )
 
-        _fcc1, _fcc2 = diamond_fcc_unit_cell()
+        _fcc1, _fcc2 = diamond_fcc_cells()
         _N1 = h * _fcc1[:, 0] + k * _fcc1[:, 1] + l * _fcc1[:, 2]
         _N2 = h * _fcc2[:, 0] + k * _fcc2[:, 1] + l * _fcc2[:, 2]
         _on1 = np.abs(_N1 - 1.0) < 1e-6
@@ -1219,8 +1190,8 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _fig.update_layout(
             title=dict(
                 text=(
-                    f"Si diamond cell | plane {miller_html(h, k, l, 'plane')}"
-                    " | Drag to rotate"
+                    f"Si diamond, 2×2×2 cells | plane "
+                    f"{miller_html(h, k, l, 'plane')} | Drag to rotate"
                 ),
                 x=0.5,
             ),
@@ -1229,22 +1200,23 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 yaxis_title="y [a]",
                 zaxis_title="z [a]",
                 aspectmode="cube",
-                camera=dict(eye=dict(x=1.8, y=1.8, z=1.2)),
-                xaxis=dict(range=[-0.5, 1.5]),
-                yaxis=dict(range=[-0.5, 1.5]),
-                zaxis=dict(range=[-0.5, 1.5]),
+                camera=dict(eye=dict(x=2.2, y=2.2, z=1.5)),
+                xaxis=dict(range=[-0.4, float(_n) + 0.5]),
+                yaxis=dict(range=[-0.4, float(_n) + 0.5]),
+                zaxis=dict(range=[-0.4, float(_n) + 0.5]),
             ),
             legend=dict(
                 yanchor="top",
                 y=0.99,
                 xanchor="left",
                 x=0.01,
+                font=dict(size=11),
                 itemclick="toggle",
                 itemdoubleclick="toggleothers",
             ),
-            height=600,
-            width=700,
-            margin=dict(l=0, r=0, t=50, b=0),
+            height=520,
+            width=520,
+            margin=dict(l=0, r=0, t=40, b=0),
         )
         return _fig
 
@@ -1308,16 +1280,19 @@ def _(
         _body = mo.vstack(
             [
                 _info,
-                plot_silicon_view(_geom),
-                mo.md(
-                    r"""
-    **3D conventional cell.** Same $(hkl)$ plane as above, drawn in one cubic
-    cell of diamond Si ($hx+ky+lz = 1$). Solid atoms lie on that plane; faded
-    atoms do not. Toggle each FCC sublattice.
-    """
-                ),
                 mo.hstack([si_fcc1, si_fcc2], justify="start", gap=2),
-                plot_silicon_3d(_h, _k, _l, si_fcc1.value, si_fcc2.value),
+                mo.hstack(
+                    [
+                        plot_silicon_3d(
+                            _h, _k, _l, si_fcc1.value, si_fcc2.value
+                        ),
+                        plot_silicon_view(_geom),
+                    ],
+                    justify="start",
+                    align="start",
+                    gap=1,
+                    widths=[1, 1],
+                ),
             ],
             gap=0.4,
         )
