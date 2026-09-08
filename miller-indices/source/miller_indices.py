@@ -332,20 +332,14 @@ def _(go, mo, np):
         plane_label = miller_plain(h, k, l, "plane")
         dir_label = miller_plain(h, k, l, "direction")
 
-        cube_edges = [
-            ([0, 1], [0, 0], [0, 0]),
-            ([0, 0], [0, 1], [0, 0]),
-            ([0, 0], [0, 0], [0, 1]),
-            ([1, 1], [0, 1], [0, 0]),
-            ([1, 1], [0, 0], [0, 1]),
-            ([0, 1], [1, 1], [0, 0]),
-            ([0, 0], [1, 1], [0, 1]),
-            ([0, 1], [0, 0], [1, 1]),
-            ([0, 0], [0, 1], [1, 1]),
-            ([1, 1], [1, 1], [0, 1]),
-            ([1, 1], [0, 1], [1, 1]),
-            ([0, 1], [1, 1], [1, 1]),
-        ]
+        _box = 1.0
+        _grid = [-_box, 0.0, _box]
+        cube_edges = []
+        for _a in _grid:
+            for _b in _grid:
+                cube_edges.append(([-_box, _box], [_a, _a], [_b, _b]))
+                cube_edges.append(([_a, _a], [-_box, _box], [_b, _b]))
+                cube_edges.append(([_a, _a], [_b, _b], [-_box, _box]))
 
         for edge in cube_edges:
             fig_miller.add_trace(
@@ -362,7 +356,7 @@ def _(go, mo, np):
 
         fig_miller.add_trace(
             go.Scatter3d(
-                x=[-2, 2],
+                x=[-_box, _box],
                 y=[0, 0],
                 z=[0, 0],
                 mode="lines",
@@ -374,7 +368,7 @@ def _(go, mo, np):
         fig_miller.add_trace(
             go.Scatter3d(
                 x=[0, 0],
-                y=[-2, 2],
+                y=[-_box, _box],
                 z=[0, 0],
                 mode="lines",
                 line=dict(color="green", width=4),
@@ -386,16 +380,17 @@ def _(go, mo, np):
             go.Scatter3d(
                 x=[0, 0],
                 y=[0, 0],
-                z=[-2, 2],
+                z=[-_box, _box],
                 mode="lines",
                 line=dict(color="blue", width=4),
                 showlegend=False,
                 hoverinfo="skip",
             )
         )
+        _lab = _box + 0.2
         fig_miller.add_trace(
             go.Scatter3d(
-                x=[2.2],
+                x=[_lab],
                 y=[0],
                 z=[0],
                 mode="text",
@@ -407,7 +402,7 @@ def _(go, mo, np):
         fig_miller.add_trace(
             go.Scatter3d(
                 x=[0],
-                y=[2.2],
+                y=[_lab],
                 z=[0],
                 mode="text",
                 text=["y"],
@@ -419,7 +414,7 @@ def _(go, mo, np):
             go.Scatter3d(
                 x=[0],
                 y=[0],
-                z=[2.2],
+                z=[_lab],
                 mode="text",
                 text=["z"],
                 textfont=dict(size=14, color="blue"),
@@ -443,7 +438,7 @@ def _(go, mo, np):
             z_int = 1.0 / l if l != 0 else None
             intercept_points = []
 
-            if x_int is not None and -2 <= x_int <= 2:
+            if x_int is not None and abs(x_int) <= _box + 1e-9:
                 fig_miller.add_trace(
                     go.Scatter3d(
                         x=[x_int],
@@ -455,7 +450,7 @@ def _(go, mo, np):
                     )
                 )
                 intercept_points.append([x_int, 0, 0])
-            if y_int is not None and -2 <= y_int <= 2:
+            if y_int is not None and abs(y_int) <= _box + 1e-9:
                 fig_miller.add_trace(
                     go.Scatter3d(
                         x=[0],
@@ -467,7 +462,7 @@ def _(go, mo, np):
                     )
                 )
                 intercept_points.append([0, y_int, 0])
-            if z_int is not None and -2 <= z_int <= 2:
+            if z_int is not None and abs(z_int) <= _box + 1e-9:
                 fig_miller.add_trace(
                     go.Scatter3d(
                         x=[0],
@@ -514,24 +509,24 @@ def _(go, mo, np):
                 p1, p2 = intercept_points
                 if h == 0:
                     vertices = [
-                        [p1[0] - 2, p1[1], p1[2]],
-                        [p1[0] + 2, p1[1], p1[2]],
-                        [p2[0] + 2, p2[1], p2[2]],
-                        [p2[0] - 2, p2[1], p2[2]],
+                        [p1[0] - _box, p1[1], p1[2]],
+                        [p1[0] + _box, p1[1], p1[2]],
+                        [p2[0] + _box, p2[1], p2[2]],
+                        [p2[0] - _box, p2[1], p2[2]],
                     ]
                 elif k == 0:
                     vertices = [
-                        [p1[0], p1[1] - 2, p1[2]],
-                        [p1[0], p1[1] + 2, p1[2]],
-                        [p2[0], p2[1] + 2, p2[2]],
-                        [p2[0], p2[1] - 2, p2[2]],
+                        [p1[0], p1[1] - _box, p1[2]],
+                        [p1[0], p1[1] + _box, p1[2]],
+                        [p2[0], p2[1] + _box, p2[2]],
+                        [p2[0], p2[1] - _box, p2[2]],
                     ]
                 else:
                     vertices = [
-                        [p1[0], p1[1], p1[2] - 2],
-                        [p1[0], p1[1], p1[2] + 2],
-                        [p2[0], p2[1], p2[2] + 2],
-                        [p2[0], p2[1], p2[2] - 2],
+                        [p1[0], p1[1], p1[2] - _box],
+                        [p1[0], p1[1], p1[2] + _box],
+                        [p2[0], p2[1], p2[2] + _box],
+                        [p2[0], p2[1], p2[2] - _box],
                     ]
                 verts = np.array(vertices)
                 fig_miller.add_trace(
@@ -563,24 +558,24 @@ def _(go, mo, np):
                 p = intercept_points[0]
                 if h != 0:
                     vertices = [
-                        [p[0], -2, -2],
-                        [p[0], 2, -2],
-                        [p[0], 2, 2],
-                        [p[0], -2, 2],
+                        [p[0], -_box, -_box],
+                        [p[0], _box, -_box],
+                        [p[0], _box, _box],
+                        [p[0], -_box, _box],
                     ]
                 elif k != 0:
                     vertices = [
-                        [-2, p[1], -2],
-                        [2, p[1], -2],
-                        [2, p[1], 2],
-                        [-2, p[1], 2],
+                        [-_box, p[1], -_box],
+                        [_box, p[1], -_box],
+                        [_box, p[1], _box],
+                        [-_box, p[1], _box],
                     ]
                 else:
                     vertices = [
-                        [-2, -2, p[2]],
-                        [2, -2, p[2]],
-                        [2, 2, p[2]],
-                        [-2, 2, p[2]],
+                        [-_box, -_box, p[2]],
+                        [_box, -_box, p[2]],
+                        [_box, _box, p[2]],
+                        [-_box, _box, p[2]],
                     ]
                 verts = np.array(vertices)
                 fig_miller.add_trace(
@@ -602,7 +597,7 @@ def _(go, mo, np):
             normal_length = np.linalg.norm(normal)
             if normal_length > 0:
                 normal_unit = normal / normal_length * 0.5
-                center = np.array([0.5, 0.5, 0.5])
+                center = np.array([0.0, 0.0, 0.0])
                 fig_miller.add_trace(
                     go.Scatter3d(
                         x=[center[0], center[0] + normal_unit[0]],
@@ -646,9 +641,9 @@ def _(go, mo, np):
                 zaxis_title="z [a]",
                 aspectmode="cube",
                 camera=dict(eye=dict(x=1.8, y=1.8, z=1.2)),
-                xaxis=dict(range=[-0.5, 1.5]),
-                yaxis=dict(range=[-0.5, 1.5]),
-                zaxis=dict(range=[-0.5, 1.5]),
+                xaxis=dict(range=[-_box - 0.35, _box + 0.35]),
+                yaxis=dict(range=[-_box - 0.35, _box + 0.35]),
+                zaxis=dict(range=[-_box - 0.35, _box + 0.35]),
             ),
             height=600,
             width=700,
@@ -726,6 +721,8 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
     )
     SI_NN = np.sqrt(3.0) / 4.0
     SI_N_CELLS = 2
+    SI_BOX_LO = -0.5 * SI_N_CELLS
+    SI_BOX_HI = 0.5 * SI_N_CELLS
     SI_FCC1_COLOR = "#0072B2"
     SI_FCC2_COLOR = "#D55E00"
     SI_OFF_EDGE = "#888888"
@@ -806,12 +803,40 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
     def cube_grid_segments(n_cells=SI_N_CELLS):
         _segs = []
         _n = int(n_cells)
+        _origin = -0.5 * _n
         for _a in range(_n + 1):
             for _b in range(_n + 1):
                 for _c in range(_n):
-                    _segs.append(np.array([[_c, _a, _b], [_c + 1, _a, _b]], dtype=float))
-                    _segs.append(np.array([[_a, _c, _b], [_a, _c + 1, _b]], dtype=float))
-                    _segs.append(np.array([[_a, _b, _c], [_a, _b, _c + 1]], dtype=float))
+                    _segs.append(
+                        np.array(
+                            [
+                                [_c, _a, _b],
+                                [_c + 1, _a, _b],
+                            ],
+                            dtype=float,
+                        )
+                        + _origin
+                    )
+                    _segs.append(
+                        np.array(
+                            [
+                                [_a, _c, _b],
+                                [_a, _c + 1, _b],
+                            ],
+                            dtype=float,
+                        )
+                        + _origin
+                    )
+                    _segs.append(
+                        np.array(
+                            [
+                                [_a, _b, _c],
+                                [_a, _b, _c + 1],
+                            ],
+                            dtype=float,
+                        )
+                        + _origin
+                    )
         return _segs
 
     def silicon_view_geometry(h, k, l):
@@ -858,7 +883,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             "n_on": int(np.count_nonzero(_on)),
             "n_off": int(np.count_nonzero(~_on)),
             "d_over_a": 1.0 / np.sqrt(h**2 + k**2 + l**2),
-            "plane_verts": plane_box_vertices(h, k, l, _C, float(SI_N_CELLS)),
+            "plane_verts": plane_box_vertices(h, k, l, _C),
             "cube_segs": cube_grid_segments(),
         }
 
@@ -1012,26 +1037,28 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             ]
         )
         _fcc1_list = []
+        _origin = -0.5 * float(n_cells)
         for _ix in range(n_cells):
             for _iy in range(n_cells):
                 for _iz in range(n_cells):
-                    _shift = np.array([_ix, _iy, _iz], dtype=float)
+                    _shift = np.array([_ix, _iy, _iz], dtype=float) + _origin
                     _fcc1_list.append(_corners + _shift)
                     _fcc1_list.append(_faces + _shift)
         _fcc1 = _unique_points(np.vstack(_fcc1_list))
         _fcc2 = _fcc1 + np.array([0.25, 0.25, 0.25])
-        _lim = float(n_cells)
-        _fcc2 = _fcc2[np.all((_fcc2 >= -1e-8) & (_fcc2 <= _lim + 1e-8), axis=1)]
+        _lo = _origin
+        _hi = _origin + float(n_cells)
+        _fcc2 = _fcc2[np.all((_fcc2 >= _lo - 1e-8) & (_fcc2 <= _hi + 1e-8), axis=1)]
         return _fcc1, _unique_points(_fcc2)
 
-    def plane_box_vertices(h, k, l, C=1.0, box=SI_N_CELLS):
+    def plane_box_vertices(h, k, l, C=1.0, lo=SI_BOX_LO, hi=SI_BOX_HI):
         _n = np.array([h, k, l], dtype=float)
         _corners = np.array(
             [
                 [_x, _y, _z]
-                for _x in (0.0, box)
-                for _y in (0.0, box)
-                for _z in (0.0, box)
+                for _x in (lo, hi)
+                for _y in (lo, hi)
+                for _z in (lo, hi)
             ]
         )
         _pts = []
@@ -1076,7 +1103,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _fig = go.Figure()
         _h, _k, _l = geom["h"], geom["k"], geom["l"]
         _plane_label = miller_plain(_h, _k, _l, "plane")
-        _n = SI_N_CELLS
+        _lo, _hi = SI_BOX_LO, SI_BOX_HI
         _xs, _ys, _zs = [], [], []
         for _seg in geom["cube_segs"]:
             _xs.extend([_seg[0, 0], _seg[1, 0], None])
@@ -1093,11 +1120,12 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 hoverinfo="skip",
             )
         )
-        _end = float(_n) + 0.35
+        _end = _hi + 0.25
+        _start = _lo - 0.25
         for _axis, _color, _label, _txt in (
-            (([-0.25, _end], [0, 0], [0, 0]), "red", "x", [_end + 0.1, 0, 0]),
-            (([0, 0], [-0.25, _end], [0, 0]), "green", "y", [0, _end + 0.1, 0]),
-            (([0, 0], [0, 0], [-0.25, _end]), "blue", "z", [0, 0, _end + 0.1]),
+            (([_start, _end], [0, 0], [0, 0]), "red", "x", [_end + 0.1, 0, 0]),
+            (([0, 0], [_start, _end], [0, 0]), "green", "y", [0, _end + 0.1, 0]),
+            (([0, 0], [0, 0], [_start, _end]), "blue", "z", [0, 0, _end + 0.1]),
         ):
             _fig.add_trace(
                 go.Scatter3d(
@@ -1244,9 +1272,9 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                         z=float(_vax[2]),
                     ),
                 ),
-                xaxis=dict(range=[-0.4, float(_n) + 0.5]),
-                yaxis=dict(range=[-0.4, float(_n) + 0.5]),
-                zaxis=dict(range=[-0.4, float(_n) + 0.5]),
+                xaxis=dict(range=[_lo - 0.35, _hi + 0.45]),
+                yaxis=dict(range=[_lo - 0.35, _hi + 0.45]),
+                zaxis=dict(range=[_lo - 0.35, _hi + 0.45]),
             ),
             legend=dict(
                 yanchor="top",
@@ -1317,7 +1345,8 @@ def _(
     $${_eq}$$
 
     Both plots use the same diamond sites: FCC 1 (corners and face centers) and
-    FCC 2 (FCC 1 $+\,(a/4,a/4,a/4)$) in the $2\times 2\times 2$ block $0\le x,y,z\le 2$.
+    FCC 2 (FCC 1 $+\,(a/4,a/4,a/4)$) in the $2\times 2\times 2$ block
+    $-a\le x,y,z\le a$.
     An atom is on the plane when $\lvert hx+ky+lz-1\rvert=0$. **{_n_on}** atoms
     satisfy that; **{_n_off}** do not. Filled blue = FCC 1, filled red = FCC 2,
     open grey = not on the plane. Spacing
