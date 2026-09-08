@@ -1182,12 +1182,8 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
 
         _fcc1 = geom["fcc1"]
         _fcc2 = geom["fcc2"]
-        _on = geom["on"]
-        _is_fcc1 = geom["is_fcc1"]
-        _on1 = _on[_is_fcc1]
-        _on2 = _on[~_is_fcc1]
 
-        def _add_on_plane(_pts, _color, _name):
+        def _add_fcc(_pts, _color, _name):
             if len(_pts) == 0:
                 return
             _fig.add_trace(
@@ -1197,41 +1193,19 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                     z=_pts[:, 2],
                     mode="markers",
                     marker=dict(
-                        size=11,
+                        size=9,
                         color=_color,
                         opacity=1.0,
-                        line=dict(width=1.5, color="black"),
+                        line=dict(width=1.0, color="black"),
                     ),
                     name=_name,
                 )
             )
 
-        _off_list = []
         if show_fcc1:
-            _add_on_plane(_fcc1[_on1], SI_FCC1_COLOR, "FCC 1")
-            if np.any(~_on1):
-                _off_list.append(_fcc1[~_on1])
+            _add_fcc(_fcc1, SI_FCC1_COLOR, "FCC 1")
         if show_fcc2:
-            _add_on_plane(_fcc2[_on2], SI_FCC2_COLOR, "FCC 2")
-            if np.any(~_on2):
-                _off_list.append(_fcc2[~_on2])
-        if _off_list:
-            _p = np.vstack(_off_list)
-            _fig.add_trace(
-                go.Scatter3d(
-                    x=_p[:, 0],
-                    y=_p[:, 1],
-                    z=_p[:, 2],
-                    mode="markers",
-                    marker=dict(
-                        size=7,
-                        color="white",
-                        opacity=1.0,
-                        line=dict(width=2, color=SI_OFF_EDGE),
-                    ),
-                    name="Not on the plane",
-                )
-            )
+            _add_fcc(_fcc2, SI_FCC2_COLOR, "FCC 2")
         if show_fcc1 and show_fcc2:
             for _p1 in _fcc2:
                 for _p2 in _fcc1:
@@ -1348,8 +1322,9 @@ def _(
     FCC 2 (FCC 1 $+\,(a/4,a/4,a/4)$) in the $2\times 2\times 2$ block
     $-a\le x,y,z\le a$.
     An atom is on the plane when $\lvert hx+ky+lz-1\rvert=0$. **{_n_on}** atoms
-    satisfy that; **{_n_off}** do not. Filled blue = FCC 1, filled red = FCC 2,
-    open grey = not on the plane. Spacing
+    satisfy that; **{_n_off}** do not. FCC 1 is blue and FCC 2 is red. In the
+    planar view, filled circles are on the plane and open grey circles are not.
+    Spacing
     $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
