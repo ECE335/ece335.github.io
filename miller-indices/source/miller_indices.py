@@ -788,32 +788,44 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             _right = f"{_C:.4g}"
         return rf"{_left} = {_right}"
 
-    def diamond_atom_positions(v1, v2):
-        """Si sites in a 2×2 window of conventional cells (coordinates in units of a)."""
-        _pts = [
-            _i * v1 + _j * v2 + _b
-            for _i in range(3)
-            for _j in range(3)
-            for _b in DIAMOND_BASIS
-        ]
-        return _unique_points(_pts)
+    def miller_intercepts_tex(h, k, l):
+        _bits = []
+        for _idx, _name in ((h, "x"), (k, "y"), (l, "z")):
+            if _idx == 0:
+                _bits.append(rf"{_name}=\infty")
+            elif abs(int(_idx)) == 1:
+                _sign = "-" if _idx < 0 else ""
+                _bits.append(rf"{_name}={_sign}a")
+            else:
+                _bits.append(rf"{_name}=a/{int(_idx)}")
+        return ",\\ ".join(_bits)
+
+    def cube_grid_segments(n_cells=SI_N_CELLS):
+        _segs = []
+        _n = int(n_cells)
+        for _a in range(_n + 1):
+            for _b in range(_n + 1):
+                for _c in range(_n):
+                    _segs.append(np.array([[_c, _a, _b], [_c + 1, _a, _b]], dtype=float))
+                    _segs.append(np.array([[_a, _c, _b], [_a, _c + 1, _b]], dtype=float))
+                    _segs.append(np.array([[_a, _b, _c], [_a, _b, _c + 1]], dtype=float))
+        return _segs
 
     def silicon_view_geometry(h, k, l):
         _v1, _v2 = in_plane_lattice_vectors(h, k, l)
         _n = np.array([h, k, l], dtype=float)
         _n_hat = _n / np.linalg.norm(_n)
-        _pts = diamond_atom_positions(_v1, _v2)
-        _M = np.column_stack([_v1, _v2, _n_hat])
-        _abc = np.linalg.solve(_M, _pts.T).T
-        _in_window = (
-            (_abc[:, 0] >= -1e-8)
-            & (_abc[:, 0] <= 2.0 + 1e-8)
-            & (_abc[:, 1] >= -1e-8)
-            & (_abc[:, 1] <= 2.0 + 1e-8)
+        _fcc1, _fcc2 = diamond_fcc_cells()
+        _pts = np.vstack([_fcc1, _fcc2])
+        _is_fcc1 = np.concatenate(
+            [
+                np.ones(len(_fcc1), dtype=bool),
+                np.zeros(len(_fcc2), dtype=bool),
+            ]
         )
-        _pts = _pts[_in_window]
         _N = h * _pts[:, 0] + k * _pts[:, 1] + l * _pts[:, 2]
-        _C = float(np.min(_N))
+        # Miller intercepts a/h, a/k, a/l  ⇒  hx + ky + lz = 1  (coords in units of a)
+        _C = 1.0
         _on = np.abs(_N - _C) < 1e-8
         _u = _v1 / np.linalg.norm(_v1)
         _w = _v2 - np.dot(_v2, _u) * _u
@@ -831,13 +843,20 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             "N": _N,
             "C": _C,
             "eq_tex": miller_plane_eq_tex(h, k, l, _C),
+            "intercepts_tex": miller_intercepts_tex(h, k, l),
             "v1": _v1,
             "v2": _v2,
             "u": _u,
             "vax": _vax,
+            "n_hat": _n_hat,
+            "fcc1": _fcc1,
+            "fcc2": _fcc2,
+            "is_fcc1": _is_fcc1,
             "n_on": int(np.count_nonzero(_on)),
-            "n_behind": int(np.count_nonzero(~_on)),
+            "n_off": int(np.count_nonzero(~_on)),
             "d_over_a": 1.0 / np.sqrt(h**2 + k**2 + l**2),
+            "plane_verts": plane_box_vertices(h, k, l, _C, float(SI_N_CELLS)),
+            "cube_segs": cube_grid_segments(),
         }
 
     def plot_silicon_view(geom):
@@ -862,25 +881,15 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                         zorder=1,
                         solid_capstyle="round",
                     )
-        for _i in range(2):
-            for _j in range(2):
-                _corners = np.array(
-                    [
-                        _i * _v1 + _j * _v2,
-                        (_i + 1) * _v1 + _j * _v2,
-                        (_i + 1) * _v1 + (_j + 1) * _v2,
-                        _i * _v1 + (_j + 1) * _v2,
-                        _i * _v1 + _j * _v2,
-                    ]
-                )
-                _ax.plot(
-                    _corners @ _u,
-                    _corners @ _vax,
-                    linestyle=(0, (5, 4)),
-                    color="#444444",
-                    lw=1.4,
-                    zorder=2,
-                )
+        for _seg in geom["cube_segs"]:
+            _ax.plot(
+                _seg @ _u,
+                _seg @ _vax,
+                linestyle=(0, (5, 4)),
+                color="#444444",
+                lw=1.4,
+                zorder=2,
+            )
         _ax.scatter(
             _xy[~_on, 0],
             _xy[~_on, 1],
@@ -889,7 +898,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             edgecolors="#D55E00",
             linewidths=2.0,
             zorder=3,
-            label="Behind (further back)",
+            label="Not on the plane",
         )
         _ax.scatter(
             _xy[_on, 0],
@@ -899,7 +908,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             edgecolors="black",
             linewidths=0.6,
             zorder=4,
-            label=rf"On the ${miller_tex(_h, _k, _l, 'plane')}$ plane",
+            label=rf"On ${miller_tex(_h, _k, _l, 'plane')}$",
         )
         _dir = miller_tex(_h, _k, _l, "family")
         _in1 = miller_tex(
@@ -1037,23 +1046,16 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _ang = np.arctan2(_rel @ _v, _rel @ _u)
         return _pts[np.argsort(_ang)]
 
-    def plot_silicon_3d(h, k, l, show_fcc1, show_fcc2):
+    def plot_silicon_3d(geom, show_fcc1, show_fcc2):
         _fig = go.Figure()
-        _plane_label = miller_plain(h, k, l, "plane")
+        _h, _k, _l = geom["h"], geom["k"], geom["l"]
+        _plane_label = miller_plain(_h, _k, _l, "plane")
         _n = SI_N_CELLS
         _xs, _ys, _zs = [], [], []
-        for _a in range(_n + 1):
-            for _b in range(_n + 1):
-                for _c in range(_n):
-                    _xs.extend([_c, _c + 1, None])
-                    _ys.extend([_a, _a, None])
-                    _zs.extend([_b, _b, None])
-                    _xs.extend([_a, _a, None])
-                    _ys.extend([_c, _c + 1, None])
-                    _zs.extend([_b, _b, None])
-                    _xs.extend([_a, _a, None])
-                    _ys.extend([_b, _b, None])
-                    _zs.extend([_c, _c + 1, None])
+        for _seg in geom["cube_segs"]:
+            _xs.extend([_seg[0, 0], _seg[1, 0], None])
+            _ys.extend([_seg[0, 1], _seg[1, 1], None])
+            _zs.extend([_seg[0, 2], _seg[1, 2], None])
         _fig.add_trace(
             go.Scatter3d(
                 x=_xs,
@@ -1094,7 +1096,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 )
             )
 
-        _verts = plane_box_vertices(h, k, l, C=1.0, box=float(_n))
+        _verts = geom["plane_verts"]
         if len(_verts) >= 3:
             _nvert = len(_verts)
             _fig.add_trace(
@@ -1124,11 +1126,12 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 )
             )
 
-        _fcc1, _fcc2 = diamond_fcc_cells()
-        _N1 = h * _fcc1[:, 0] + k * _fcc1[:, 1] + l * _fcc1[:, 2]
-        _N2 = h * _fcc2[:, 0] + k * _fcc2[:, 1] + l * _fcc2[:, 2]
-        _on1 = np.abs(_N1 - 1.0) < 1e-6
-        _on2 = np.abs(_N2 - 1.0) < 1e-6
+        _fcc1 = geom["fcc1"]
+        _fcc2 = geom["fcc2"]
+        _on = geom["on"]
+        _is_fcc1 = geom["is_fcc1"]
+        _on1 = _on[_is_fcc1]
+        _on2 = _on[~_is_fcc1]
 
         def _add_atoms(_pts, _on, _color, _name):
             _off = ~_on
@@ -1187,11 +1190,14 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                             )
                         )
 
+        _n_hat = geom["n_hat"]
+        _vax = geom["vax"]
+        _eye = 2.4 * _n_hat
         _fig.update_layout(
             title=dict(
                 text=(
                     f"Si diamond, 2×2×2 cells | plane "
-                    f"{miller_html(h, k, l, 'plane')} | Drag to rotate"
+                    f"{miller_html(_h, _k, _l, 'plane')} | Drag to rotate"
                 ),
                 x=0.5,
             ),
@@ -1200,7 +1206,14 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 yaxis_title="y [a]",
                 zaxis_title="z [a]",
                 aspectmode="cube",
-                camera=dict(eye=dict(x=2.2, y=2.2, z=1.5)),
+                camera=dict(
+                    eye=dict(x=float(_eye[0]), y=float(_eye[1]), z=float(_eye[2])),
+                    up=dict(
+                        x=float(_vax[0]),
+                        y=float(_vax[1]),
+                        z=float(_vax[2]),
+                    ),
+                ),
                 xaxis=dict(range=[-0.4, float(_n) + 0.5]),
                 yaxis=dict(range=[-0.4, float(_n) + 0.5]),
                 zaxis=dict(range=[-0.4, float(_n) + 0.5]),
@@ -1260,21 +1273,24 @@ def _(
         _dir = miller_tex(_h, _k, _l, "family")
         _plane = miller_tex(_h, _k, _l, "plane")
         _eq = _geom["eq_tex"]
+        _intercepts = _geom["intercepts_tex"]
         _n_on = _geom["n_on"]
-        _n_behind = _geom["n_behind"]
+        _n_off = _geom["n_off"]
         _d = _geom["d_over_a"]
         _info = mo.md(
             rf"""
-    Viewing along ${_dir}$. Cubic Si $\Rightarrow$ the facing plane is ${_plane}$.
+    Viewing along ${_dir}$. Cubic Si $\Rightarrow$ you face ${_plane}$.
 
-    Diamond sites are computed from the 8-atom conventional basis. An atom at
-    $(x,y,z)$ (units of $a$) lies on that plane when
+    Miller intercepts of ${_plane}$: ${_intercepts}$ (coordinates in units of $a$).
+    The plane through those intercepts is
 
     $${_eq}$$
 
-    The constant is the smallest $hx+ky+lz$ in the 2×2 window (the plane facing
-    you). **{_n_on}** atoms satisfy it (filled). **{_n_behind}** sit on parallel
-    planes further back (open). Spacing $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
+    Both plots use the same diamond sites: FCC 1 (corners and face centers) and
+    FCC 2 (FCC 1 $+\,(a/4,a/4,a/4)$) in the $2\times 2\times 2$ block $0\le x,y,z\le 2$.
+    An atom is on the plane when $\lvert hx+ky+lz-1\rvert=0$. **{_n_on}** atoms
+    satisfy that; **{_n_off}** do not. Spacing
+    $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
         _body = mo.vstack(
@@ -1283,9 +1299,7 @@ def _(
                 mo.hstack([si_fcc1, si_fcc2], justify="start", gap=2),
                 mo.hstack(
                     [
-                        plot_silicon_3d(
-                            _h, _k, _l, si_fcc1.value, si_fcc2.value
-                        ),
+                        plot_silicon_3d(_geom, si_fcc1.value, si_fcc2.value),
                         plot_silicon_view(_geom),
                     ],
                     justify="start",
