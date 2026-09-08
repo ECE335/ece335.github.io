@@ -726,6 +726,9 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
     )
     SI_NN = np.sqrt(3.0) / 4.0
     SI_N_CELLS = 2
+    SI_FCC1_COLOR = "#0072B2"
+    SI_FCC2_COLOR = "#D55E00"
+    SI_OFF_EDGE = "#888888"
 
     def _unique_points(pts, decimals=8):
         _rounded = np.round(np.asarray(pts, dtype=float), decimals=decimals)
@@ -859,19 +862,29 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             "cube_segs": cube_grid_segments(),
         }
 
-    def plot_silicon_view(geom):
+    def plot_silicon_view(geom, show_fcc1, show_fcc2):
         _pts = geom["pts"]
         _xy = geom["xy"]
         _on = geom["on"]
+        _is_fcc1 = geom["is_fcc1"]
         _v1 = geom["v1"]
         _v2 = geom["v2"]
         _u = geom["u"]
         _vax = geom["vax"]
         _h, _k, _l = geom["h"], geom["k"], geom["l"]
+        _vis = np.zeros(len(_pts), dtype=bool)
+        if show_fcc1:
+            _vis |= _is_fcc1
+        if show_fcc2:
+            _vis |= ~_is_fcc1
+        _on1 = _vis & _on & _is_fcc1
+        _on2 = _vis & _on & ~_is_fcc1
+        _off = _vis & ~_on
 
         _fig, _ax = plt.subplots(figsize=(5.2, 5.2))
-        for _i in range(len(_pts)):
-            for _j in range(_i + 1, len(_pts)):
+        _idx = np.flatnonzero(_vis)
+        for _a, _i in enumerate(_idx):
+            for _j in _idx[_a + 1 :]:
                 if abs(np.linalg.norm(_pts[_i] - _pts[_j]) - SI_NN) < 1e-6:
                     _ax.plot(
                         [_xy[_i, 0], _xy[_j, 0]],
@@ -890,26 +903,39 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
                 lw=1.4,
                 zorder=2,
             )
-        _ax.scatter(
-            _xy[~_on, 0],
-            _xy[~_on, 1],
-            s=150,
-            facecolors="white",
-            edgecolors="#D55E00",
-            linewidths=2.0,
-            zorder=3,
-            label="Not on the plane",
-        )
-        _ax.scatter(
-            _xy[_on, 0],
-            _xy[_on, 1],
-            s=190,
-            c="#0072B2",
-            edgecolors="black",
-            linewidths=0.6,
-            zorder=4,
-            label=rf"On ${miller_tex(_h, _k, _l, 'plane')}$",
-        )
+        if np.any(_off):
+            _ax.scatter(
+                _xy[_off, 0],
+                _xy[_off, 1],
+                s=150,
+                facecolors="white",
+                edgecolors=SI_OFF_EDGE,
+                linewidths=1.6,
+                zorder=3,
+                label="Not on the plane",
+            )
+        if np.any(_on1):
+            _ax.scatter(
+                _xy[_on1, 0],
+                _xy[_on1, 1],
+                s=190,
+                c=SI_FCC1_COLOR,
+                edgecolors="black",
+                linewidths=0.6,
+                zorder=4,
+                label="FCC 1",
+            )
+        if np.any(_on2):
+            _ax.scatter(
+                _xy[_on2, 0],
+                _xy[_on2, 1],
+                s=190,
+                c=SI_FCC2_COLOR,
+                edgecolors="black",
+                linewidths=0.6,
+                zorder=4,
+                label="FCC 2",
+            )
         _dir = miller_tex(_h, _k, _l, "family")
         _in1 = miller_tex(
             int(round(_v1[0])), int(round(_v1[1])), int(round(_v1[2])), "direction"
@@ -955,7 +981,7 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
             fontsize=16,
             loc="upper center",
             bbox_to_anchor=(0.5, -0.14),
-            ncol=2,
+            ncol=3,
         )
         _ax.spines["top"].set_visible(False)
         _ax.spines["right"].set_visible(False)
@@ -1133,47 +1159,51 @@ def _(go, miller_html, miller_plain, miller_tex, mo, np, plt):
         _on1 = _on[_is_fcc1]
         _on2 = _on[~_is_fcc1]
 
-        def _add_atoms(_pts, _on, _color, _name):
-            _off = ~_on
-            if np.any(_off):
-                _p = _pts[_off]
-                _fig.add_trace(
-                    go.Scatter3d(
-                        x=_p[:, 0],
-                        y=_p[:, 1],
-                        z=_p[:, 2],
-                        mode="markers",
-                        marker=dict(
-                            size=7,
-                            color=_color,
-                            opacity=0.4,
-                            line=dict(width=0.5, color=_color),
-                        ),
-                        name=f"{_name} (off plane)",
-                    )
+        def _add_on_plane(_pts, _color, _name):
+            if len(_pts) == 0:
+                return
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=_pts[:, 0],
+                    y=_pts[:, 1],
+                    z=_pts[:, 2],
+                    mode="markers",
+                    marker=dict(
+                        size=11,
+                        color=_color,
+                        opacity=1.0,
+                        line=dict(width=1.5, color="black"),
+                    ),
+                    name=_name,
                 )
-            if np.any(_on):
-                _p = _pts[_on]
-                _fig.add_trace(
-                    go.Scatter3d(
-                        x=_p[:, 0],
-                        y=_p[:, 1],
-                        z=_p[:, 2],
-                        mode="markers",
-                        marker=dict(
-                            size=11,
-                            color=_color,
-                            opacity=1.0,
-                            line=dict(width=1.5, color="black"),
-                        ),
-                        name=f"{_name} on {_plane_label}",
-                    )
-                )
+            )
 
+        _off_list = []
         if show_fcc1:
-            _add_atoms(_fcc1, _on1, "#0072B2", "FCC 1")
+            _add_on_plane(_fcc1[_on1], SI_FCC1_COLOR, "FCC 1")
+            if np.any(~_on1):
+                _off_list.append(_fcc1[~_on1])
         if show_fcc2:
-            _add_atoms(_fcc2, _on2, "#D55E00", "FCC 2")
+            _add_on_plane(_fcc2[_on2], SI_FCC2_COLOR, "FCC 2")
+            if np.any(~_on2):
+                _off_list.append(_fcc2[~_on2])
+        if _off_list:
+            _p = np.vstack(_off_list)
+            _fig.add_trace(
+                go.Scatter3d(
+                    x=_p[:, 0],
+                    y=_p[:, 1],
+                    z=_p[:, 2],
+                    mode="markers",
+                    marker=dict(
+                        size=7,
+                        color="white",
+                        opacity=1.0,
+                        line=dict(width=2, color=SI_OFF_EDGE),
+                    ),
+                    name="Not on the plane",
+                )
+            )
         if show_fcc1 and show_fcc2:
             for _p1 in _fcc2:
                 for _p2 in _fcc1:
@@ -1289,7 +1319,8 @@ def _(
     Both plots use the same diamond sites: FCC 1 (corners and face centers) and
     FCC 2 (FCC 1 $+\,(a/4,a/4,a/4)$) in the $2\times 2\times 2$ block $0\le x,y,z\le 2$.
     An atom is on the plane when $\lvert hx+ky+lz-1\rvert=0$. **{_n_on}** atoms
-    satisfy that; **{_n_off}** do not. Spacing
+    satisfy that; **{_n_off}** do not. Filled blue = FCC 1, filled red = FCC 2,
+    open grey = not on the plane. Spacing
     $d/a = 1/\sqrt{{{_h}^2+{_k}^2+{_l}^2}} = {_d:.3f}$.
     """
         )
@@ -1300,7 +1331,9 @@ def _(
                 mo.hstack(
                     [
                         plot_silicon_3d(_geom, si_fcc1.value, si_fcc2.value),
-                        plot_silicon_view(_geom),
+                        plot_silicon_view(
+                            _geom, si_fcc1.value, si_fcc2.value
+                        ),
                     ],
                     justify="start",
                     align="start",
