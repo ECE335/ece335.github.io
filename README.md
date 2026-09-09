@@ -10,6 +10,8 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 |:---|:---|:---|
 | Crystal Lattices | [lectures/crystal-lattices](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/crystal-lattices) | [ece335.github.io/crystal-lattice](https://ece335.github.io/crystal-lattice) |
 | Miller Indices | [lectures/miller-indices](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/miller-indices) | [ece335.github.io/miller-indices](https://ece335.github.io/miller-indices) |
+| Packing Density in Crystals | [lectures/packing-density](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/packing-density) | [ece335.github.io/packing-density](https://ece335.github.io/packing-density) |
+| Quantum Physics | [lectures/quantum-intro](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/quantum-intro) | [ece335.github.io/quantum-intro](https://ece335.github.io/quantum-intro) |
 
 ## Adding a notebook later
 
