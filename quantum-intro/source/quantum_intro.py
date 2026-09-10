@@ -925,8 +925,9 @@ def _(mo):
     Does the wavefunction still vanish at the edges? How does the ground-state
     energy compare with the infinite well of the same width?
 
-    Keep the well on $0<x<a$: $V(x)=0$ inside and $V(x)=V_0$ outside.
-    A bound state has $0<E<V_0$. Write $y=x-a/2$ to use symmetry about its centre:
+    Place the well on $-a/2<x<a/2$: $V(x)=0$ inside and $V(x)=V_0$ outside.
+    A bound state has $0<E<V_0$. Because $V(-x)=V(x)$, the eigenfunctions
+    can be chosen even or odd about $x=0$:
 
 
     $$
@@ -935,8 +936,8 @@ def _(mo):
     $$
 
 
-    Inside, even states are $A\cos(ky)$ and odd states $A\sin(ky)$.
-    Outside, the tails decay as $e^{-\kappa(|y|-a/2)}$ and match the value
+    Inside, even states are $A\cos(kx)$ and odd states $A\sin(kx)$.
+    Outside, the tails decay as $e^{-\kappa(|x|-a/2)}$ and match the value
     at each edge. Continuity of the derivative gives
 
 
@@ -1005,13 +1006,13 @@ def _(HBAR, M_E, Q, np):
 
     def finite_well_wave(x, a, state):
         energy,k,kap,even,norm,outside = state
-        y = np.asarray(x)-a/2
-        inner = np.cos(k*y) if even else np.sin(k*y)
+        x = np.asarray(x)
+        inner = np.cos(k*x) if even else np.sin(k*x)
         edge = np.cos(k*a/2) if even else np.sin(k*a/2)
-        tail = edge*np.exp(-kap*np.maximum(abs(y)-a/2,0))
+        tail = edge*np.exp(-kap*np.maximum(np.abs(x)-a/2,0))
         if not even:
-            tail = tail*np.sign(y)
-        return norm*np.where(abs(y)<=a/2,inner,tail)
+            tail = tail*np.sign(x)
+        return norm*np.where(np.abs(x)<=a/2,inner,tail)
 
     return finite_well_states, finite_well_wave
 
@@ -1045,14 +1046,16 @@ def _(
     _index = int(finite_state.value)
     _state = finite_states[_index]
     _E,_k,_kap,_even,_norm,_outside = _state
-    _extent = max(_a/2, 7/_kap)
+    _half = _a/2
+    _pad = max(_half, 7/_kap)
+    _xmin, _xmax = -_half-_pad, _half+_pad
     _x = np.unique(np.concatenate([
-        np.linspace(-_extent,0,3000),np.linspace(0,_a,3000),np.linspace(_a,_a+_extent,3000)]))
+        np.linspace(_xmin,-_half,3000),np.linspace(-_half,_half,3000),np.linspace(_half,_xmax,3000)]))
     _wave = finite_well_wave(_x,_a,_state)
     _fig,(_aE,_aW,_aP)=plt.subplots(3,1,figsize=(8.5,10),layout="constrained")
-    _aE.plot([-_extent,0,0,_a,_a,_a+_extent],[_V0,_V0,0,0,_V0,_V0],color=ORANGE,label=r"$V(x)$")
+    _aE.plot([_xmin,-_half,-_half,_half,_half,_xmax],[_V0,_V0,0,0,_V0,_V0],color=ORANGE,label=r"$V(x)$")
     for _i,_st in enumerate(finite_states):
-        _aE.hlines(_st[0],0,_a,color=BLUE,lw=3 if _i==_index else 1,alpha=1 if _i==_index else .35)
+        _aE.hlines(_st[0],-_half,_half,color=BLUE,lw=3 if _i==_index else 1,alpha=1 if _i==_index else .35)
     _aE.set_ylabel("energy (eV)")
     _aE.set_title(f"{len(finite_states)} bound states; selected n={_index+1}")
     _aE.legend(frameon=False)
@@ -1060,18 +1063,18 @@ def _(
     _aW.axhline(0,color="gray",lw=.8)
     _aW.set_ylabel(r"$\psi$ (nm$^{-1/2}$)")
     _aP.plot(_x,abs(_wave)**2,color=BLUE)
-    _aP.fill_between(_x,0,abs(_wave)**2,where=(_x<0)|(_x>_a),color=ORANGE,alpha=.35)
+    _aP.fill_between(_x,0,abs(_wave)**2,where=np.abs(_x)>_half,color=ORANGE,alpha=.35)
     _aP.set_ylabel(r"$|\psi|^2$ (nm$^{-1}$)")
     for _axis in (_aE,_aW,_aP):
-        _axis.axvline(0,color="gray",ls=":")
-        _axis.axvline(_a,color="gray",ls=":")
-        _axis.set_xlim(-_extent,_a+_extent)
+        _axis.axvline(-_half,color="gray",ls=":")
+        _axis.axvline(_half,color="gray",ls=":")
+        _axis.set_xlim(_xmin,_xmax)
         _axis.set_xlabel("x (nm)")
         style_ax(_axis)
     mo.vstack([_fig,mo.md(rf"""
     Selected energy: $E={_E:.4f}$ eV. The infinite-well value for the same
     $n$ and $a$ is ${infinite_well_E_eV(_index+1,_a):.5f}$ eV.
-    The state is **{'even' if _even else 'odd'}** about $x=a/2$.
+    The state is **{'even' if _even else 'odd'}** about $x=0$.
 
     The total probability outside the well is ${_outside:.4f}$
     ({100*_outside:.2f}%). The numerical integral over the plotted domain is
