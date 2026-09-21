@@ -13,6 +13,8 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | Packing Density in Crystals | [lectures/packing-density](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/packing-density) | [ece335.github.io/packing-density](https://ece335.github.io/packing-density) |
 | Quantum Physics | [lectures/quantum-intro](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/quantum-intro) | [ece335.github.io/quantum-intro](https://ece335.github.io/quantum-intro) |
 | Energy Bands | [lectures/energy-bands](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/energy-bands) | [ece335.github.io/energy-bands](https://ece335.github.io/energy-bands) |
+| Density of States and Fermi–Dirac Statistics | [lectures/density-of-states](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/density-of-states) | [ece335.github.io/density-of-states](https://ece335.github.io/density-of-states) |
+| Extrinsic Semiconductor | [lectures/extrinsic-equilibrium](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/extrinsic-equilibrium) | [ece335.github.io/extrinsic-equilibrium](https://ece335.github.io/extrinsic-equilibrium) |
 
 ## Adding a notebook later
 
