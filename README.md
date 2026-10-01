@@ -15,6 +15,7 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | Energy Bands | [lectures/energy-bands](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/energy-bands) | [ece335.github.io/energy-bands](https://ece335.github.io/energy-bands) |
 | Density of States and Fermi–Dirac Statistics | [lectures/density-of-states](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/density-of-states) | [ece335.github.io/density-of-states](https://ece335.github.io/density-of-states) |
 | Extrinsic Semiconductor | [lectures/extrinsic-equilibrium](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/extrinsic-equilibrium) | [ece335.github.io/extrinsic-equilibrium](https://ece335.github.io/extrinsic-equilibrium) |
+| Band Bending | [lectures/band-bending](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/band-bending) | [ece335.github.io/band-bending](https://ece335.github.io/band-bending) |
 
 ## Adding a notebook later
 
