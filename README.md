@@ -17,6 +17,7 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | Extrinsic Semiconductor | [lectures/extrinsic-equilibrium](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/extrinsic-equilibrium) | [ece335.github.io/extrinsic-equilibrium](https://ece335.github.io/extrinsic-equilibrium) |
 | Band Bending | [lectures/band-bending](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/band-bending) | [ece335.github.io/band-bending](https://ece335.github.io/band-bending) |
 | Carrier Diffusion | [lectures/diffusion-continuity](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/diffusion-continuity) | [ece335.github.io/diffusion-continuity](https://ece335.github.io/diffusion-continuity) |
+| pn Junction under Applied Bias | [lectures/pn-junction-bias](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/pn-junction-bias) | [ece335.github.io/pn-junction-bias](https://ece335.github.io/pn-junction-bias) |
 
 ## Adding a notebook later
 
