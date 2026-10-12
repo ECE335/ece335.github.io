@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <link rel="icon" href="./favicon.ico" />
+    <!-- Preload is necessary because we show these images when we disconnect from the server,
+    but at that point we cannot load these images from the server -->
+    <link rel="preload" href="./assets/gradient-yHQUC_QB.png" as="image" />
+    <link rel="preload" href="./assets/noise-60BoTA8O.png" as="image" />
+    <!-- Preload the fonts -->
+    <link rel="preload" href="./assets/Lora-VariableFont_wght-CZceb_kH.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Regular-Bam3NpBI.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Bold-C_DwAp7Z.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Regular-CEsLFVD9.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Medium-D5MAsWEG.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Bold-C6PDArdf.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="a marimo app" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <script data-marimo="true">
+      function __resizeIframe(obj) {
+        const scrollbarHeight = 20; // Max between windows, mac, and linux
+
+        function setHeight() {
+          // Guard against race condition where iframe isn't ready
+          if (!obj.contentWindow?.document?.documentElement) {
+            return;
+          }
+          const element = obj.contentWindow.document.documentElement;
+          // If there is no vertical scrollbar, we don't need to resize the iframe
+          if (element.scrollHeight === element.clientHeight) {
+            return;
+          }
+
+          // Create a new height that includes the scrollbar height if it's visible
+          const hasHorizontalScrollbar = element.scrollWidth > element.clientWidth;
+          const newHeight = element.scrollHeight + (hasHorizontalScrollbar ? scrollbarHeight : 0);
+
+          // Only update the height if it's different from the current height
+          if (obj.style.height !== `${newHeight}px`) {
+            obj.style.height = `${newHeight}px`;
+          }
+        }
+
+        // Resize the iframe to the height of the content and bottom scrollbar height
+        setHeight();
+
+        // Resize the iframe when the content changes
+        const resizeObserver = new ResizeObserver((_entries) => {
+          setHeight();
+        });
+        // Only observe if iframe content is ready
+        if (obj.contentWindow?.document?.body) {
+          resizeObserver.observe(obj.contentWindow.document.body);
+        }
+      }
+    </script>
+    <marimo-filename hidden>notebook.py</marimo-filename>
+    <!-- TODO(Trevor): Legacy, required by VS Code plugin. Remove when plugin is updated (see marimo/server/_templates/template.py) -->
+    <marimo-version data-version="{{ version }}" hidden></marimo-version>
+    <marimo-user-config data-config="{{ user_config }}" hidden></marimo-user-config>
+    <marimo-server-token data-token="{{ server_token }}" hidden></marimo-server-token>
+    <!-- /TODO -->
+    <title>junction capacitance</title>
+    <script type="module" crossorigin src="./assets/index-4n22QjCD.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-B0Z9INg1.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-CBDbhulC.js">
+    <link rel="modulepreload" crossorigin href="./assets/compiler-runtime-CYIjoINj.js">
+    <link rel="modulepreload" crossorigin href="./assets/useEvent-xfs0Sn4r.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-dom-BQrReHnR.js">
+    <link rel="modulepreload" crossorigin href="./assets/schemas-aTUejmFi.js">
+    <link rel="modulepreload" crossorigin href="./assets/isObject-BCaOs5rp.js">
+    <link rel="modulepreload" crossorigin href="./assets/isSymbol-oX0TOjjx.js">
+    <link rel="modulepreload" crossorigin href="./assets/now-Cmx0b_zA.js">
+    <link rel="modulepreload" crossorigin href="./assets/debounce-aFmHgJZY.js">
+    <link rel="modulepreload" crossorigin href="./assets/isArrayLikeObject-DnwgSs_Z.js">
+    <link rel="modulepreload" crossorigin href="./assets/_initCloneObject-CM3WilQg.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseMerge-DLqSVasz.js">
+    <link rel="modulepreload" crossorigin href="./assets/objects-snlMn4yk.js">
+    <link rel="modulepreload" crossorigin href="./assets/jsx-runtime-B74pBk57.js">
+    <link rel="modulepreload" crossorigin href="./assets/useEventListener-92uWqz-P.js">
+    <link rel="modulepreload" crossorigin href="./assets/invariant-Ci2dTZ72.js">
+    <link rel="modulepreload" crossorigin href="./assets/utils-D5Ywm7-q.js">
+    <link rel="modulepreload" crossorigin href="./assets/constants-BDbGiS7O.js">
+    <link rel="modulepreload" crossorigin href="./assets/Deferred-CrTnjj37.js">
+    <link rel="modulepreload" crossorigin href="./assets/session-Sz5nSFku.js">
+    <link rel="modulepreload" crossorigin href="./assets/config-BlNM0caL.js">
+    <link rel="modulepreload" crossorigin href="./assets/clsx-DB0hHKMi.js">
+    <link rel="modulepreload" crossorigin href="./assets/cn-ldLVeaqm.js">
+    <link rel="modulepreload" crossorigin href="./assets/fullscreen-BH2jz-F4.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DzCQtGkt.js">
+    <link rel="modulepreload" crossorigin href="./assets/menu-items-BSRA2YI9.js">
+    <link rel="modulepreload" crossorigin href="./assets/button-Dh8EwhsF.js">
+    <link rel="modulepreload" crossorigin href="./assets/alert-dialog-CA-2mBs3.js">
+    <link rel="modulepreload" crossorigin href="./assets/createLucideIcon-B7HeEoG2.js">
+    <link rel="modulepreload" crossorigin href="./assets/check-BoA6XBpj.js">
+    <link rel="modulepreload" crossorigin href="./assets/context-Do8M9TDF.js">
+    <link rel="modulepreload" crossorigin href="./assets/useNumberFormatter-DHJ9s6Vk.js">
+    <link rel="modulepreload" crossorigin href="./assets/select-nLt2y0Sw.js">
+    <link rel="modulepreload" crossorigin href="./assets/circle-ByJdIf5p.js">
+    <link rel="modulepreload" crossorigin href="./assets/tooltip-BUtPzKB4.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-BtC9ym6k.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-CZNULd6Z.js">
+    <link rel="modulepreload" crossorigin href="./assets/arrays-BqUx5USx.js">
+    <link rel="modulepreload" crossorigin href="./assets/once-Haz_uxEL.js">
+    <link rel="modulepreload" crossorigin href="./assets/capabilities-D8kPgMKr.js">
+    <link rel="modulepreload" crossorigin href="./assets/cjs-C49f7GXV.js">
+    <link rel="modulepreload" crossorigin href="./assets/createReducer-B_XmHROl.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DiYjQAhI.js">
+    <link rel="modulepreload" crossorigin href="./assets/marked.esm-B_3iMIUq.js">
+    <link rel="modulepreload" crossorigin href="./assets/strings-CReV1AYG.js">
+    <link rel="modulepreload" crossorigin href="./assets/requests-C6_IaFh7.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-B8pdsUrS.js">
+    <link rel="modulepreload" crossorigin href="./assets/useLifecycle-BUaJcygz.js">
+    <link rel="modulepreload" crossorigin href="./assets/toDate-hGYJX0Ha.js">
+    <link rel="modulepreload" crossorigin href="./assets/database-zap-CloO6gbw.js">
+    <link rel="modulepreload" crossorigin href="./assets/numbers-Bc-r3jsC.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDebounce-DgpSQhrP.js">
+    <link rel="modulepreload" crossorigin href="./assets/input-DEbY281O.js">
+    <link rel="modulepreload" crossorigin href="./assets/uuid-k9DpjH68.js">
+    <link rel="modulepreload" crossorigin href="./assets/use-toast-DpWHUGuF.js">
+    <link rel="modulepreload" crossorigin href="./assets/write-secret-modal-D6zoZgLY.js">
+    <link rel="modulepreload" crossorigin href="./assets/plus-C4J9gIE1.js">
+    <link rel="modulepreload" crossorigin href="./assets/trash-2-D_HX-0qx.js">
+    <link rel="modulepreload" crossorigin href="./assets/badge-BSgtkC2e.js">
+    <link rel="modulepreload" crossorigin href="./assets/preload-helper-HclGiUj8.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DkPPv0FB.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Dw9YRsCU.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-B0RXffUm.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Cx4BE7jC.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-CKUpxYGQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/stex-Dc5bKD4z.js">
+    <link rel="modulepreload" crossorigin href="./assets/paths-zcL04qUW.js">
+    <link rel="modulepreload" crossorigin href="./assets/useTheme-C-ri8BtY.js">
+    <link rel="modulepreload" crossorigin href="./assets/useAsyncData-Buhk-UgR.js">
+    <link rel="modulepreload" crossorigin href="./assets/purify.es-DrVcFY1Q.js">
+    <link rel="modulepreload" crossorigin href="./assets/cells-Cp-G34Rz.js">
+    <link rel="modulepreload" crossorigin href="./assets/get-DjNf4SIX.js">
+    <link rel="modulepreload" crossorigin href="./assets/_hasPath-BmRQipI0.js">
+    <link rel="modulepreload" crossorigin href="./assets/hasIn-yw4sIeJR.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseSet-gX6o3Pih.js">
+    <link rel="modulepreload" crossorigin href="./assets/pick-Bs4cJfJU.js">
+    <link rel="modulepreload" crossorigin href="./assets/errors-DzO-nXy-.js">
+    <link rel="modulepreload" crossorigin href="./assets/switch-DjXr9Y9D.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-BMXKNElG.js">
+    <link rel="modulepreload" crossorigin href="./assets/eye-off-CFuPxa9F.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-DlEomWzI.js">
+    <link rel="modulepreload" crossorigin href="./assets/extends-CvVTau-c.js">
+    <link rel="modulepreload" crossorigin href="./assets/esm-BHMOvJzM.js">
+    <link rel="modulepreload" crossorigin href="./assets/useAddCell-DdB_uBif.js">
+    <link rel="modulepreload" crossorigin href="./assets/readonly-python-code-DpIyjHqY.js">
+    <link rel="modulepreload" crossorigin href="./assets/LazyAnyLanguageCodeMirror-LboTfNDv.js">
+    <link rel="modulepreload" crossorigin href="./assets/micromark-factory-space-D9Dr-k4J.js">
+    <link rel="modulepreload" crossorigin href="./assets/chunk-5FQGJX7Z-CRg4xQWg.js">
+    <link rel="modulepreload" crossorigin href="./assets/markdown-renderer-BZKlbm2Q.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-icon-z8fuTE3w.js">
+    <link rel="modulepreload" crossorigin href="./assets/useRunCells-CX7oW5zy.js">
+    <link rel="modulepreload" crossorigin href="./assets/RenderHTML-DwhMAd9l.js">
+    <link rel="modulepreload" crossorigin href="./assets/blob-B2d_dHwI.js">
+    <link rel="modulepreload" crossorigin href="./assets/share-CPtBiNgr.js">
+    <link rel="modulepreload" crossorigin href="./assets/events-CbeVJ6OD.js">
+    <link rel="modulepreload" crossorigin href="./assets/state-Di9TbuV9.js">
+    <link rel="modulepreload" crossorigin href="./assets/ErrorBoundary-CDVGFYfr.js">
+    <link rel="modulepreload" crossorigin href="./assets/config-B-r81uZ6.js">
+    <link rel="modulepreload" crossorigin href="./assets/tabs-Cy1qXLzH.js">
+    <link rel="modulepreload" crossorigin href="./assets/chevron-right-CKA5zVsM.js">
+    <link rel="modulepreload" crossorigin href="./assets/dropdown-menu-C40jM9o4.js">
+    <link rel="modulepreload" crossorigin href="./assets/html-to-image-D6GUC5q6.js">
+    <link rel="modulepreload" crossorigin href="./assets/download-DMxOzI7b.js">
+    <link rel="modulepreload" crossorigin href="./assets/table-CUK1W5bI.js">
+    <link rel="modulepreload" crossorigin href="./assets/refresh-cw-Bf-rx_aV.js">
+    <link rel="modulepreload" crossorigin href="./assets/tree-actions-CG5g7aUQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/ellipsis-Dfik_tuW.js">
+    <link rel="modulepreload" crossorigin href="./assets/external-link-Bp3BxyRA.js">
+    <link rel="modulepreload" crossorigin href="./assets/spinner-Ck-Hgfvj.js">
+    <link rel="modulepreload" crossorigin href="./assets/message-circle-BQB1AIAg.js">
+    <link rel="modulepreload" crossorigin href="./assets/hat-glasses-C8LSY3HT.js">
+    <link rel="modulepreload" crossorigin href="./assets/package-DPlscLzt.js">
+    <link rel="modulepreload" crossorigin href="./assets/datasource-DrODSIs0.js">
+    <link rel="modulepreload" crossorigin href="./assets/kbd-Cwh96ZBE.js">
+    <link rel="modulepreload" crossorigin href="./assets/alert-dmKwNsrp.js">
+    <link rel="modulepreload" crossorigin href="./assets/useInstallPackage-DsD08SLK.js">
+    <link rel="modulepreload" crossorigin href="./assets/state-B6AklCzD.js">
+    <link rel="modulepreload" crossorigin href="./assets/cell-link-6burT2XF.js">
+    <link rel="modulepreload" crossorigin href="./assets/MarimoErrorOutput-DqpoYOvw.js">
+    <link rel="modulepreload" crossorigin href="./assets/VisuallyHidden-CBMDmozt.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDateFormatter-BiqAQ-zI.js">
+    <link rel="modulepreload" crossorigin href="./assets/en-US-yTIMUO13.js">
+    <link rel="modulepreload" crossorigin href="./assets/isValid-nQ3Iam8J.js">
+    <link rel="modulepreload" crossorigin href="./assets/dates-B58T85Jq.js">
+    <link rel="modulepreload" crossorigin href="./assets/defaultLocale-CNPGWpMu.js">
+    <link rel="modulepreload" crossorigin href="./assets/precisionRound-Bq_nmf5u.js">
+    <link rel="modulepreload" crossorigin href="./assets/defaultLocale-Dm4DaIgg.js">
+    <link rel="modulepreload" crossorigin href="./assets/vega-loader.browser-AQmjV9CX.js">
+    <link rel="modulepreload" crossorigin href="./assets/tooltip-BG35uS_N.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-icons.esm-hr79-MCS.js">
+    <link rel="modulepreload" crossorigin href="./assets/emotion-is-prop-valid.esm-nLO-SoUf.js">
+    <link rel="modulepreload" crossorigin href="./assets/useIframeCapabilities-C7Di8f2y.js">
+    <link rel="modulepreload" crossorigin href="./assets/error-banner-Dw5YY9wq.js">
+    <link rel="modulepreload" crossorigin href="./assets/utils-49LGK4zG.js">
+    <link rel="modulepreload" crossorigin href="./assets/formats-C6s96nu2.js">
+    <link rel="modulepreload" crossorigin href="./assets/table-DmqOOjfe.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-resizable-panels.browser.esm-BSRAHC4P.js">
+    <link rel="modulepreload" crossorigin href="./assets/JsonOutput-CzIGPEZQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/chart-no-axes-column-ChZdjJhj.js">
+    <link rel="modulepreload" crossorigin href="./assets/square-function-DkZweMAs.js">
+    <link rel="modulepreload" crossorigin href="./assets/spec-DKsAmLTi.js">
+    <link rel="modulepreload" crossorigin href="./assets/semaphore-BjoL5P0h.js">
+    <link rel="modulepreload" crossorigin href="./assets/fileToBase64-NhpNrK5l.js">
+    <link rel="modulepreload" crossorigin href="./assets/useBoolean-BXC4CItZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/code-xml-B7x62Eeh.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-headphone-rFCxFRI8.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-DF8n85RA.js">
+    <link rel="modulepreload" crossorigin href="./assets/image-ab13yGv4.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-icons-DdGYuADJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/globe-BQf75qV_.js">
+    <link rel="modulepreload" crossorigin href="./assets/markdown-export-0rLbaq8b.js">
+    <link rel="modulepreload" crossorigin href="./assets/data-grid-types-DgHVN_Zz.js">
+    <link rel="modulepreload" crossorigin href="./assets/glide-utils-UGsrRHYj.js">
+    <link rel="modulepreload" crossorigin href="./assets/column-preview-riSXbYe_.js">
+    <link rel="modulepreload" crossorigin href="./assets/square-B58Ib8Ir.js">
+    <link rel="modulepreload" crossorigin href="./assets/triangle-alert-MihykDYG.js">
+    <link rel="modulepreload" crossorigin href="./assets/prop-types-Djf4O40e.js">
+    <link rel="modulepreload" crossorigin href="./assets/es-CrFhA96G.js">
+    <link rel="modulepreload" crossorigin href="./assets/renderShortcut-X-CJUSM8.js">
+    <link rel="modulepreload" crossorigin href="./assets/bundle.esm-DzY74mzC.js">
+    <link rel="modulepreload" crossorigin href="./assets/icons-CjLa9BiH.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDeepCompareMemoize-CLytDdMl.js">
+    <link rel="modulepreload" crossorigin href="./assets/pathUtils-Cryrlpma.js">
+    <link rel="modulepreload" crossorigin href="./assets/floating-outline-DaUHnl_e.js">
+    <link rel="stylesheet" crossorigin href="./assets/cells-D-c15Ks-.css">
+    <link rel="stylesheet" crossorigin href="./assets/markdown-renderer-B7zTpxjS.css">
+    <link rel="stylesheet" crossorigin href="./assets/JsonOutput-BQtz7-np.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-C7yAojRA.css">
+  <marimo-wasm hidden=""></marimo-wasm>
+    <script>
+        if (window.location.protocol === 'file:') {
+            alert('Warning: This file must be served by an HTTP server to function correctly.');
+        }
+    </script>
+    
+    <style>
+        #save-button {
+            display: none !important;
+        }
+        #filename-input {
+            display: none !important;
+        }
+    </style>
+    
+<script data-marimo="true">
+    Object.defineProperty(window, "__MARIMO_EXPORT_CONTEXT__", {
+        value: Object.freeze({
+            trusted: true,
+            notebookCode: "# /// script\n# requires-python = \"\u003E=3.12\"\n# dependencies = [\n#     \"marimo\",\n#     \"numpy==2.5.3\",\n#     \"matplotlib==3.11.2\",\n# ]\n# ///\n\nimport marimo\n\n__generated_with = \"0.24.2\"\napp = marimo.App(width=\"medium\")\n\n\n@app.cell\ndef _():\n    import marimo as mo\n    import numpy as np\n\n    return mo, np\n\n\n@app.cell\ndef _(np):\n    import matplotlib.pyplot as plt\n\n    plt.rcParams.update(\n        {\n            \"font.size\": 16,\n            \"axes.labelsize\": 16,\n            \"axes.titlesize\": 16,\n            \"xtick.labelsize\": 16,\n            \"ytick.labelsize\": 16,\n            \"legend.fontsize\": 16,\n            \"axes.linewidth\": 1.2,\n            \"figure.facecolor\": \"white\",\n            \"axes.facecolor\": \"white\",\n            \"mathtext.fontset\": \"dejavusans\",\n        }\n    )\n\n    # Silicon at 300 K. Same constants as the pn-junction companion and the slides.\n    KT_E = 0.0259\n    NI_SI = 1.5e10\n    E_CHARGE = 1.6e-19\n    EPS_S = 11.7 * 8.85e-14\n    VR_MAX = 10.0\n    AREA_CM2 = 1.0e-4\n\n    BLUE = \"#0072B2\"\n    ORANGE = \"#D55E00\"\n    GREEN = \"#009E73\"\n    NAVY = \"#0f4c81\"\n    GRAY = \"#6B6B6B\"\n\n    def sci_tex(x, digits=2):\n        x = float(x)\n        if not np.isfinite(x) or x == 0.0:\n            return \"0\"\n        sign = \"-\" if x \u003C 0 else \"\"\n        ax = abs(x)\n        exp = int(np.floor(np.log10(ax)))\n        man = ax / (10.0**exp)\n        return rf\"{sign}{man:.{digits}f}\\times 10^{{{exp}}}\"\n\n    def style_ax(ax):\n        ax.tick_params(direction=\"out\", length=4, width=1.0)\n        ax.grid(True, alpha=0.28, color=GRAY)\n        ax.spines[\"top\"].set_visible(False)\n        ax.spines[\"right\"].set_visible(False)\n\n    def built_in_voltage(Na, Nd):\n        \"\"\"V_bi = (kT/e) ln(N_a N_d / n_i^2), Eq. (7.10), volts.\"\"\"\n        return float(KT_E * np.log(float(Na) * float(Nd) / NI_SI**2))\n\n    def depletion_width(Na, Nd, Vbarrier):\n        \"\"\"W (cm) for a positive barrier V_bi + V_R, Eq. (7.34).\"\"\"\n        Na, Nd = float(Na), float(Nd)\n        return np.sqrt(2.0 * EPS_S * Vbarrier / E_CHARGE * (Na + Nd) / (Na * Nd))\n\n    def junction_cap(Na, Nd, Vbarrier):\n        \"\"\"C' (F/cm^2) for a positive barrier V_bi + V_R, Eq. (7.42).\"\"\"\n        Na, Nd = float(Na), float(Nd)\n        return np.sqrt(E_CHARGE * EPS_S * Na * Nd / (2.0 * Vbarrier * (Na + Nd)))\n\n    def inv_cap2_slope(Na, Nd):\n        \"\"\"d(1/C'^2)/dV_R in (F/cm^2)^-2 V^-1.\"\"\"\n        Na, Nd = float(Na), float(Nd)\n        return 2.0 * (Na + Nd) / (E_CHARGE * EPS_S * Na * Nd)\n\n    return (\n        AREA_CM2,\n        BLUE,\n        GRAY,\n        GREEN,\n        NAVY,\n        ORANGE,\n        VR_MAX,\n        built_in_voltage,\n        depletion_width,\n        inv_cap2_slope,\n        junction_cap,\n        plt,\n        sci_tex,\n        style_ax,\n    )\n\n\n@app.cell\ndef _(mo):\n    mo.md(r\"\"\"\n    # Junction Capacitance\n    **ECE335 - companion to lectures**\n\n    An abrupt silicon pn junction under reverse bias \\(V_R\\). This computes the junction capacitance per unit area \\(C'\\) and \\((1/C')^2\\) versus \\(V_R\\) from the depletion approximation. The derivation stays on the slides.\n\n    Silicon at \\(300\\,\\mathrm{K}\\), with \\(n_i = 1.5\\times 10^{10}\\,\\mathrm{cm}^{-3}\\), \\(kT/e = 0.0259\\,\\mathrm{V}\\), and \\(\\varepsilon_s = 11.7\\varepsilon_0\\).\n    \"\"\")\n    return\n\n\n@app.cell\ndef _(VR_MAX, mo):\n    Na_log_slider = mo.ui.slider(\n        start=14.0,\n        stop=18.0,\n        step=0.1,\n        value=16.0,\n        show_value=True,\n        label=r\"log\u2081\u2080(N_a / cm\u207b\u00b3)\",\n    )\n    Nd_log_slider = mo.ui.slider(\n        start=14.0,\n        stop=18.0,\n        step=0.1,\n        value=15.0,\n        show_value=True,\n        label=r\"log\u2081\u2080(N_d / cm\u207b\u00b3)\",\n    )\n    VR_slider = mo.ui.slider(\n        start=0.0,\n        stop=VR_MAX,\n        step=0.1,\n        value=5.0,\n        show_value=True,\n        label=r\"V_R (V)\",\n    )\n    _controls = mo.vstack(\n        [\n            mo.md(r\"## Interactive: Junction Capacitance\"),\n            mo.hstack(\n                [Na_log_slider, Nd_log_slider, VR_slider],\n                justify=\"start\",\n                gap=1.0,\n                wrap=True,\n            ),\n        ]\n    )\n    _controls\n    return Na_log_slider, Nd_log_slider, VR_slider\n\n\n@app.cell\ndef _(\n    AREA_CM2,\n    BLUE,\n    GRAY,\n    GREEN,\n    NAVY,\n    Na_log_slider,\n    Nd_log_slider,\n    ORANGE,\n    VR_MAX,\n    VR_slider,\n    built_in_voltage,\n    depletion_width,\n    inv_cap2_slope,\n    junction_cap,\n    mo,\n    np,\n    plt,\n    sci_tex,\n    style_ax,\n):\n    _Na = 10.0 ** float(Na_log_slider.value)\n    _Nd = 10.0 ** float(Nd_log_slider.value)\n    _VR = float(VR_slider.value)\n    _Vbi = built_in_voltage(_Na, _Nd)\n\n    _VR_arr = np.linspace(0.0, VR_MAX, 500)\n    _C_arr = junction_cap(_Na, _Nd, _Vbi + _VR_arr)\n    _C0 = float(junction_cap(_Na, _Nd, _Vbi))\n    _C_op = float(junction_cap(_Na, _Nd, _Vbi + _VR))\n    _W_op = float(depletion_width(_Na, _Nd, _Vbi + _VR))\n    _slope = inv_cap2_slope(_Na, _Nd)\n\n    # (1/C')^2 is linear in V_R, so the extension to the intercept at -V_bi is exact\n    # within the depletion approximation. It is dashed because forward bias adds C_d.\n    _VR_ext = np.linspace(-_Vbi, 0.0, 50)\n    _inv2_arr = _slope * (_Vbi + _VR_arr)\n    _inv2_ext = _slope * (_Vbi + _VR_ext)\n    _inv2_op = _slope * (_Vbi + _VR)\n    _inv2_exp = int(np.floor(np.log10(_slope * (_Vbi + VR_MAX))))\n    _inv2_scale = 10.0**_inv2_exp\n\n    _fig, (_ax_C, _ax_inv) = plt.subplots(1, 2, figsize=(12.4, 5.2), layout=\"constrained\")\n\n    _ax_C.plot(_VR_arr, _C_arr * 1.0e9, color=BLUE, linewidth=2.2)\n    _ax_C.plot(\n        0.0,\n        _C0 * 1.0e9,\n        \"o\",\n        color=GRAY,\n        markersize=8,\n        clip_on=False,\n        label=rf\"$C'_0 = {_C0 * 1.0e9:.2f}$ nF/cm$^2$\",\n    )\n    _ax_C.plot(\n        _VR,\n        _C_op * 1.0e9,\n        \"o\",\n        color=ORANGE,\n        markersize=9,\n        label=rf\"$C' = {_C_op * 1.0e9:.2f}$ nF/cm$^2$\",\n    )\n    _ax_C.set_xlim(0.0, VR_MAX)\n    _ax_C.set_ylim(0.0, 1.08 * _C0 * 1.0e9)\n    _ax_C.set_xlabel(r\"$V_R$ (V)\")\n    _ax_C.set_ylabel(r\"$C'$ (nF/cm$^2$)\")\n    _ax_C.set_title(r\"(a)  $C'$ versus $V_R$\")\n    _ax_C.legend(fontsize=16, loc=\"upper right\")\n    style_ax(_ax_C)\n\n    _ax_inv.plot(_VR_arr, _inv2_arr / _inv2_scale, color=GREEN, linewidth=2.2)\n    _ax_inv.plot(\n        _VR_ext, _inv2_ext / _inv2_scale, color=GREEN, linewidth=1.6, linestyle=\"--\"\n    )\n    _ax_inv.plot(\n        -_Vbi,\n        0.0,\n        \"o\",\n        color=NAVY,\n        markersize=8,\n        clip_on=False,\n        label=rf\"$-V_{{bi}} = {-_Vbi:.3f}$ V\",\n    )\n    _ax_inv.plot(_VR, _inv2_op / _inv2_scale, \"o\", color=ORANGE, markersize=9)\n    _ax_inv.axhline(0.0, color=GRAY, linewidth=0.6)\n    _ax_inv.axvline(0.0, color=GRAY, linewidth=0.6, linestyle=\":\")\n    _ax_inv.set_xlim(-1.0, VR_MAX)\n    _ax_inv.set_ylim(bottom=-0.03 * _slope * (_Vbi + VR_MAX) / _inv2_scale)\n    _ax_inv.set_xlabel(r\"$V_R$ (V)\")\n    _ax_inv.set_ylabel(\n        rf\"$(1/C')^2$ ($10^{{{_inv2_exp}}}$ cm$^4$/F$^2$)\"\n    )\n    _ax_inv.set_title(r\"(b)  $(1/C')^2$ versus $V_R$\")\n    _ax_inv.legend(fontsize=16, loc=\"upper left\")\n    style_ax(_ax_inv)\n\n    _calc = mo.md(rf\"\"\"\n    $$\n    \\begin{{aligned}}\n    V_{{bi}} \u0026= \\frac{{kT}}{{e}}\\ln\\frac{{N_aN_d}}{{n_i^2}} = {_Vbi:.3f}\\ \\mathrm{{V}} \\\\\n    W \u0026= \\left[\\frac{{2\\varepsilon_s(V_{{bi}}+V_R)}}{{e}}\\,\\frac{{N_a+N_d}}{{N_aN_d}}\\right]^{{1/2}} = {_W_op * 1.0e4:.3f}\\ \\mu\\mathrm{{m}} \\\\\n    C' \u0026= \\left[\\frac{{e\\varepsilon_s N_aN_d}}{{2(V_{{bi}}+V_R)(N_a+N_d)}}\\right]^{{1/2}} = \\frac{{\\varepsilon_s}}{{W}} = {sci_tex(_C_op)}\\ \\mathrm{{F/cm^2}} \\\\\n    \\frac{{d(1/C')^2}}{{dV_R}} \u0026= \\frac{{2(N_a+N_d)}}{{e\\varepsilon_s N_aN_d}} = {sci_tex(_slope)}\\ \\mathrm{{(F/cm^2)^{{-2}}\\,V^{{-1}}}}\n    \\end{{aligned}}\n    $$\n    \"\"\")\n    _note = mo.md(\n        rf\"\"\"\n    At \\(V_R = {_VR:.1f}\\,\\mathrm{{V}}\\): \\(N_a = {sci_tex(_Na)}\\,\\mathrm{{cm}}^{{-3}}\\), \\(N_d = {sci_tex(_Nd)}\\,\\mathrm{{cm}}^{{-3}}\\). For a junction area \\(A = 10^{{-4}}\\,\\mathrm{{cm}}^2\\), \\(C = C'A = {_C_op * AREA_CM2 * 1.0e12:.3f}\\,\\mathrm{{pF}}\\). The dashed part of (b) is the straight line extended to its intercept at \\(V_R = -V_{{bi}}\\).\n    \"\"\"\n    )\n    mo.vstack([_fig, _calc, _note])\n    return\n\n\n@app.cell\ndef _(mo):\n    _explain = mo.accordion(\n        {\n            \"What the plots are doing\": mo.md(\n                r\"\"\"\n    Both panels use the same \\(C'\\), Eq. (7.42). \\(C'\\) falls as \\(1/\\sqrt{V_{bi}+V_R}\\) because \\(W\\) grows as \\(\\sqrt{V_{bi}+V_R}\\), and \\(C' = \\varepsilon_s/W\\).\n\n    Squaring the inverse gives a straight line in \\(V_R\\). Its slope depends only on \\(N_aN_d/(N_a+N_d)\\), and it reaches zero at \\(V_R = -V_{bi}\\). When one side is much more heavily doped, the slope is set by the lighter side alone.\n\n    The grey dot in (a) is the zero-bias value \\(C'_0\\). The orange dots mark the \\(V_R\\) slider in both panels.\n\n    The line in (b) is dashed for \\(V_R \u003C 0\\), which is forward bias. The depletion formula still gives a number there, but the diffusion capacitance \\(C_d\\) of the stored minority carriers is added and soon dominates. A C\u2013V measurement is done in reverse bias and extrapolated to the intercept.\n    \"\"\"\n            )\n        }\n    )\n    _explain\n    return\n\n\n@app.cell\ndef _(mo):\n    mo.md(r\"\"\"\n    ## Check your understanding\n\n    Use the sliders and the numbers under the plot, then open the answers.\n\n    1. At the default dopings, what is \\(C'\\) at \\(V_R = 5\\,\\mathrm{V}\\)? By what factor does \\(C'\\) fall from zero bias to \\(V_R = 5\\,\\mathrm{V}\\)?\n    2. Keep \\(N_d = 10^{15}\\,\\mathrm{cm}^{-3}\\) and raise \\(N_a\\) from \\(10^{16}\\) to \\(10^{18}\\,\\mathrm{cm}^{-3}\\). Does the slope of \\((1/C')^2\\) change much? Why?\n    3. Swap the two dopings, so \\(N_a = 10^{15}\\) and \\(N_d = 10^{16}\\,\\mathrm{cm}^{-3}\\). What changes on either plot?\n    \"\"\")\n    return\n\n\n@app.cell\ndef _(built_in_voltage, inv_cap2_slope, junction_cap, mo, sci_tex):\n    _Na = 1.0e16\n    _Nd = 1.0e15\n    _Vbi = built_in_voltage(_Na, _Nd)\n    _C0 = float(junction_cap(_Na, _Nd, _Vbi))\n    _C5 = float(junction_cap(_Na, _Nd, _Vbi + 5.0))\n    _s16 = inv_cap2_slope(1.0e16, _Nd)\n    _s18 = inv_cap2_slope(1.0e18, _Nd)\n    mo.accordion(\n        {\n            \"Answers\": mo.md(\n                rf\"\"\"\n    1. \\(C' = {sci_tex(_C5)}\\,\\mathrm{{F/cm^2}}\\) at \\(V_R = 5\\,\\mathrm{{V}}\\), down from \\(C'_0 = {sci_tex(_C0)}\\,\\mathrm{{F/cm^2}}\\). The ratio is \\(\\sqrt{{(V_{{bi}}+5)/V_{{bi}}}} = {_C0 / _C5:.2f}\\), because \\(C' \\propto 1/\\sqrt{{V_{{bi}}+V_R}}\\).\n    2. Only a little. The slope goes from \\({sci_tex(_s16)}\\) to \\({sci_tex(_s18)}\\,\\mathrm{{(F/cm^2)^{{-2}}\\,V^{{-1}}}}\\), a change of \\({(1 - _s18 / _s16) * 100:.0f}\\%\\). \\((N_a+N_d)/(N_aN_d) = 1/N_a + 1/N_d\\) is already dominated by \\(1/N_d\\) at \\(N_a = 10N_d\\). The intercept moves a little too, because \\(V_{{bi}}\\) grows with \\(\\ln N_a\\).\n    3. Nothing on the plots. \\(C'\\), \\(V_{{bi}}\\), and the slope depend only on the product and sum of \\(N_a\\) and \\(N_d\\). Only the side that holds most of \\(W\\) changes. A C\u2013V measurement cannot tell which side is which.\n    \"\"\"\n            )\n        }\n    )\n    return\n\n\nif __name__ == \"__main__\":\n    app.run()\n",
+        }),
+        writable: false,
+        configurable: false,
+    });
+</script>
+<marimo-code hidden="">%23%20%2F%2F%2F%20script%0A%23%20requires-python%20%3D%20%22%3E%3D3.12%22%0A%23%20dependencies%20%3D%20%5B%0A%23%20%20%20%20%20%22marimo%22%2C%0A%23%20%20%20%20%20%22numpy%3D%3D2.5.3%22%2C%0A%23%20%20%20%20%20%22matplotlib%3D%3D3.11.2%22%2C%0A%23%20%5D%0A%23%20%2F%2F%2F%0A%0Aimport%20marimo%0A%0A__generated_with%20%3D%20%220.24.2%22%0Aapp%20%3D%20marimo.App(width%3D%22medium%22)%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20import%20marimo%20as%20mo%0A%20%20%20%20import%20numpy%20as%20np%0A%0A%20%20%20%20return%20mo%2C%20np%0A%0A%0A%40app.cell%0Adef%20_(np)%3A%0A%20%20%20%20import%20matplotlib.pyplot%20as%20plt%0A%0A%20%20%20%20plt.rcParams.update(%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22font.size%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22axes.labelsize%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22axes.titlesize%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22xtick.labelsize%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22ytick.labelsize%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22legend.fontsize%22%3A%2016%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22axes.linewidth%22%3A%201.2%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22figure.facecolor%22%3A%20%22white%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22axes.facecolor%22%3A%20%22white%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mathtext.fontset%22%3A%20%22dejavusans%22%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20)%0A%0A%20%20%20%20%23%20Silicon%20at%20300%20K.%20Same%20constants%20as%20the%20pn-junction%20companion%20and%20the%20slides.%0A%20%20%20%20KT_E%20%3D%200.0259%0A%20%20%20%20NI_SI%20%3D%201.5e10%0A%20%20%20%20E_CHARGE%20%3D%201.6e-19%0A%20%20%20%20EPS_S%20%3D%2011.7%20*%208.85e-14%0A%20%20%20%20VR_MAX%20%3D%2010.0%0A%20%20%20%20AREA_CM2%20%3D%201.0e-4%0A%0A%20%20%20%20BLUE%20%3D%20%22%230072B2%22%0A%20%20%20%20ORANGE%20%3D%20%22%23D55E00%22%0A%20%20%20%20GREEN%20%3D%20%22%23009E73%22%0A%20%20%20%20NAVY%20%3D%20%22%230f4c81%22%0A%20%20%20%20GRAY%20%3D%20%22%236B6B6B%22%0A%0A%20%20%20%20def%20sci_tex(x%2C%20digits%3D2)%3A%0A%20%20%20%20%20%20%20%20x%20%3D%20float(x)%0A%20%20%20%20%20%20%20%20if%20not%20np.isfinite(x)%20or%20x%20%3D%3D%200.0%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20%220%22%0A%20%20%20%20%20%20%20%20sign%20%3D%20%22-%22%20if%20x%20%3C%200%20else%20%22%22%0A%20%20%20%20%20%20%20%20ax%20%3D%20abs(x)%0A%20%20%20%20%20%20%20%20exp%20%3D%20int(np.floor(np.log10(ax)))%0A%20%20%20%20%20%20%20%20man%20%3D%20ax%20%2F%20(10.0**exp)%0A%20%20%20%20%20%20%20%20return%20rf%22%7Bsign%7D%7Bman%3A.%7Bdigits%7Df%7D%5Ctimes%2010%5E%7B%7B%7Bexp%7D%7D%7D%22%0A%0A%20%20%20%20def%20style_ax(ax)%3A%0A%20%20%20%20%20%20%20%20ax.tick_params(direction%3D%22out%22%2C%20length%3D4%2C%20width%3D1.0)%0A%20%20%20%20%20%20%20%20ax.grid(True%2C%20alpha%3D0.28%2C%20color%3DGRAY)%0A%20%20%20%20%20%20%20%20ax.spines%5B%22top%22%5D.set_visible(False)%0A%20%20%20%20%20%20%20%20ax.spines%5B%22right%22%5D.set_visible(False)%0A%0A%20%20%20%20def%20built_in_voltage(Na%2C%20Nd)%3A%0A%20%20%20%20%20%20%20%20%22%22%22V_bi%20%3D%20(kT%2Fe)%20ln(N_a%20N_d%20%2F%20n_i%5E2)%2C%20Eq.%20(7.10)%2C%20volts.%22%22%22%0A%20%20%20%20%20%20%20%20return%20float(KT_E%20*%20np.log(float(Na)%20*%20float(Nd)%20%2F%20NI_SI**2))%0A%0A%20%20%20%20def%20depletion_width(Na%2C%20Nd%2C%20Vbarrier)%3A%0A%20%20%20%20%20%20%20%20%22%22%22W%20(cm)%20for%20a%20positive%20barrier%20V_bi%20%2B%20V_R%2C%20Eq.%20(7.34).%22%22%22%0A%20%20%20%20%20%20%20%20Na%2C%20Nd%20%3D%20float(Na)%2C%20float(Nd)%0A%20%20%20%20%20%20%20%20return%20np.sqrt(2.0%20*%20EPS_S%20*%20Vbarrier%20%2F%20E_CHARGE%20*%20(Na%20%2B%20Nd)%20%2F%20(Na%20*%20Nd))%0A%0A%20%20%20%20def%20junction_cap(Na%2C%20Nd%2C%20Vbarrier)%3A%0A%20%20%20%20%20%20%20%20%22%22%22C'%20(F%2Fcm%5E2)%20for%20a%20positive%20barrier%20V_bi%20%2B%20V_R%2C%20Eq.%20(7.42).%22%22%22%0A%20%20%20%20%20%20%20%20Na%2C%20Nd%20%3D%20float(Na)%2C%20float(Nd)%0A%20%20%20%20%20%20%20%20return%20np.sqrt(E_CHARGE%20*%20EPS_S%20*%20Na%20*%20Nd%20%2F%20(2.0%20*%20Vbarrier%20*%20(Na%20%2B%20Nd)))%0A%0A%20%20%20%20def%20inv_cap2_slope(Na%2C%20Nd)%3A%0A%20%20%20%20%20%20%20%20%22%22%22d(1%2FC'%5E2)%2FdV_R%20in%20(F%2Fcm%5E2)%5E-2%20V%5E-1.%22%22%22%0A%20%20%20%20%20%20%20%20Na%2C%20Nd%20%3D%20float(Na)%2C%20float(Nd)%0A%20%20%20%20%20%20%20%20return%202.0%20*%20(Na%20%2B%20Nd)%20%2F%20(E_CHARGE%20*%20EPS_S%20*%20Na%20*%20Nd)%0A%0A%20%20%20%20return%20(%0A%20%20%20%20%20%20%20%20AREA_CM2%2C%0A%20%20%20%20%20%20%20%20BLUE%2C%0A%20%20%20%20%20%20%20%20GRAY%2C%0A%20%20%20%20%20%20%20%20GREEN%2C%0A%20%20%20%20%20%20%20%20NAVY%2C%0A%20%20%20%20%20%20%20%20ORANGE%2C%0A%20%20%20%20%20%20%20%20VR_MAX%2C%0A%20%20%20%20%20%20%20%20built_in_voltage%2C%0A%20%20%20%20%20%20%20%20depletion_width%2C%0A%20%20%20%20%20%20%20%20inv_cap2_slope%2C%0A%20%20%20%20%20%20%20%20junction_cap%2C%0A%20%20%20%20%20%20%20%20plt%2C%0A%20%20%20%20%20%20%20%20sci_tex%2C%0A%20%20%20%20%20%20%20%20style_ax%2C%0A%20%20%20%20)%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20%23%20Junction%20Capacitance%0A%20%20%20%20**ECE335%20-%20companion%20to%20lectures**%0A%0A%20%20%20%20An%20abrupt%20silicon%20pn%20junction%20under%20reverse%20bias%20%5C(V_R%5C).%20This%20computes%20the%20junction%20capacitance%20per%20unit%20area%20%5C(C'%5C)%20and%20%5C((1%2FC')%5E2%5C)%20versus%20%5C(V_R%5C)%20from%20the%20depletion%20approximation.%20The%20derivation%20stays%20on%20the%20slides.%0A%0A%20%20%20%20Silicon%20at%20%5C(300%5C%2C%5Cmathrm%7BK%7D%5C)%2C%20with%20%5C(n_i%20%3D%201.5%5Ctimes%2010%5E%7B10%7D%5C%2C%5Cmathrm%7Bcm%7D%5E%7B-3%7D%5C)%2C%20%5C(kT%2Fe%20%3D%200.0259%5C%2C%5Cmathrm%7BV%7D%5C)%2C%20and%20%5C(%5Cvarepsilon_s%20%3D%2011.7%5Cvarepsilon_0%5C).%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(VR_MAX%2C%20mo)%3A%0A%20%20%20%20Na_log_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%20start%3D14.0%2C%0A%20%20%20%20%20%20%20%20stop%3D18.0%2C%0A%20%20%20%20%20%20%20%20step%3D0.1%2C%0A%20%20%20%20%20%20%20%20value%3D16.0%2C%0A%20%20%20%20%20%20%20%20show_value%3DTrue%2C%0A%20%20%20%20%20%20%20%20label%3Dr%22log%E2%82%81%E2%82%80(N_a%20%2F%20cm%E2%81%BB%C2%B3)%22%2C%0A%20%20%20%20)%0A%20%20%20%20Nd_log_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%20start%3D14.0%2C%0A%20%20%20%20%20%20%20%20stop%3D18.0%2C%0A%20%20%20%20%20%20%20%20step%3D0.1%2C%0A%20%20%20%20%20%20%20%20value%3D15.0%2C%0A%20%20%20%20%20%20%20%20show_value%3DTrue%2C%0A%20%20%20%20%20%20%20%20label%3Dr%22log%E2%82%81%E2%82%80(N_d%20%2F%20cm%E2%81%BB%C2%B3)%22%2C%0A%20%20%20%20)%0A%20%20%20%20VR_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%20start%3D0.0%2C%0A%20%20%20%20%20%20%20%20stop%3DVR_MAX%2C%0A%20%20%20%20%20%20%20%20step%3D0.1%2C%0A%20%20%20%20%20%20%20%20value%3D5.0%2C%0A%20%20%20%20%20%20%20%20show_value%3DTrue%2C%0A%20%20%20%20%20%20%20%20label%3Dr%22V_R%20(V)%22%2C%0A%20%20%20%20)%0A%20%20%20%20_controls%20%3D%20mo.vstack(%0A%20%20%20%20%20%20%20%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20mo.md(r%22%23%23%20Interactive%3A%20Junction%20Capacitance%22)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20mo.hstack(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5BNa_log_slider%2C%20Nd_log_slider%2C%20VR_slider%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20justify%3D%22start%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20gap%3D1.0%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20wrap%3DTrue%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20%5D%0A%20%20%20%20)%0A%20%20%20%20_controls%0A%20%20%20%20return%20Na_log_slider%2C%20Nd_log_slider%2C%20VR_slider%0A%0A%0A%40app.cell%0Adef%20_(%0A%20%20%20%20AREA_CM2%2C%0A%20%20%20%20BLUE%2C%0A%20%20%20%20GRAY%2C%0A%20%20%20%20GREEN%2C%0A%20%20%20%20NAVY%2C%0A%20%20%20%20Na_log_slider%2C%0A%20%20%20%20Nd_log_slider%2C%0A%20%20%20%20ORANGE%2C%0A%20%20%20%20VR_MAX%2C%0A%20%20%20%20VR_slider%2C%0A%20%20%20%20built_in_voltage%2C%0A%20%20%20%20depletion_width%2C%0A%20%20%20%20inv_cap2_slope%2C%0A%20%20%20%20junction_cap%2C%0A%20%20%20%20mo%2C%0A%20%20%20%20np%2C%0A%20%20%20%20plt%2C%0A%20%20%20%20sci_tex%2C%0A%20%20%20%20style_ax%2C%0A)%3A%0A%20%20%20%20_Na%20%3D%2010.0%20**%20float(Na_log_slider.value)%0A%20%20%20%20_Nd%20%3D%2010.0%20**%20float(Nd_log_slider.value)%0A%20%20%20%20_VR%20%3D%20float(VR_slider.value)%0A%20%20%20%20_Vbi%20%3D%20built_in_voltage(_Na%2C%20_Nd)%0A%0A%20%20%20%20_VR_arr%20%3D%20np.linspace(0.0%2C%20VR_MAX%2C%20500)%0A%20%20%20%20_C_arr%20%3D%20junction_cap(_Na%2C%20_Nd%2C%20_Vbi%20%2B%20_VR_arr)%0A%20%20%20%20_C0%20%3D%20float(junction_cap(_Na%2C%20_Nd%2C%20_Vbi))%0A%20%20%20%20_C_op%20%3D%20float(junction_cap(_Na%2C%20_Nd%2C%20_Vbi%20%2B%20_VR))%0A%20%20%20%20_W_op%20%3D%20float(depletion_width(_Na%2C%20_Nd%2C%20_Vbi%20%2B%20_VR))%0A%20%20%20%20_slope%20%3D%20inv_cap2_slope(_Na%2C%20_Nd)%0A%0A%20%20%20%20%23%20(1%2FC')%5E2%20is%20linear%20in%20V_R%2C%20so%20the%20extension%20to%20the%20intercept%20at%20-V_bi%20is%20exact%0A%20%20%20%20%23%20within%20the%20depletion%20approximation.%20It%20is%20dashed%20because%20forward%20bias%20adds%20C_d.%0A%20%20%20%20_VR_ext%20%3D%20np.linspace(-_Vbi%2C%200.0%2C%2050)%0A%20%20%20%20_inv2_arr%20%3D%20_slope%20*%20(_Vbi%20%2B%20_VR_arr)%0A%20%20%20%20_inv2_ext%20%3D%20_slope%20*%20(_Vbi%20%2B%20_VR_ext)%0A%20%20%20%20_inv2_op%20%3D%20_slope%20*%20(_Vbi%20%2B%20_VR)%0A%20%20%20%20_inv2_exp%20%3D%20int(np.floor(np.log10(_slope%20*%20(_Vbi%20%2B%20VR_MAX))))%0A%20%20%20%20_inv2_scale%20%3D%2010.0**_inv2_exp%0A%0A%20%20%20%20_fig%2C%20(_ax_C%2C%20_ax_inv)%20%3D%20plt.subplots(1%2C%202%2C%20figsize%3D(12.4%2C%205.2)%2C%20layout%3D%22constrained%22)%0A%0A%20%20%20%20_ax_C.plot(_VR_arr%2C%20_C_arr%20*%201.0e9%2C%20color%3DBLUE%2C%20linewidth%3D2.2)%0A%20%20%20%20_ax_C.plot(%0A%20%20%20%20%20%20%20%200.0%2C%0A%20%20%20%20%20%20%20%20_C0%20*%201.0e9%2C%0A%20%20%20%20%20%20%20%20%22o%22%2C%0A%20%20%20%20%20%20%20%20color%3DGRAY%2C%0A%20%20%20%20%20%20%20%20markersize%3D8%2C%0A%20%20%20%20%20%20%20%20clip_on%3DFalse%2C%0A%20%20%20%20%20%20%20%20label%3Drf%22%24C'_0%20%3D%20%7B_C0%20*%201.0e9%3A.2f%7D%24%20nF%2Fcm%24%5E2%24%22%2C%0A%20%20%20%20)%0A%20%20%20%20_ax_C.plot(%0A%20%20%20%20%20%20%20%20_VR%2C%0A%20%20%20%20%20%20%20%20_C_op%20*%201.0e9%2C%0A%20%20%20%20%20%20%20%20%22o%22%2C%0A%20%20%20%20%20%20%20%20color%3DORANGE%2C%0A%20%20%20%20%20%20%20%20markersize%3D9%2C%0A%20%20%20%20%20%20%20%20label%3Drf%22%24C'%20%3D%20%7B_C_op%20*%201.0e9%3A.2f%7D%24%20nF%2Fcm%24%5E2%24%22%2C%0A%20%20%20%20)%0A%20%20%20%20_ax_C.set_xlim(0.0%2C%20VR_MAX)%0A%20%20%20%20_ax_C.set_ylim(0.0%2C%201.08%20*%20_C0%20*%201.0e9)%0A%20%20%20%20_ax_C.set_xlabel(r%22%24V_R%24%20(V)%22)%0A%20%20%20%20_ax_C.set_ylabel(r%22%24C'%24%20(nF%2Fcm%24%5E2%24)%22)%0A%20%20%20%20_ax_C.set_title(r%22(a)%20%20%24C'%24%20versus%20%24V_R%24%22)%0A%20%20%20%20_ax_C.legend(fontsize%3D16%2C%20loc%3D%22upper%20right%22)%0A%20%20%20%20style_ax(_ax_C)%0A%0A%20%20%20%20_ax_inv.plot(_VR_arr%2C%20_inv2_arr%20%2F%20_inv2_scale%2C%20color%3DGREEN%2C%20linewidth%3D2.2)%0A%20%20%20%20_ax_inv.plot(%0A%20%20%20%20%20%20%20%20_VR_ext%2C%20_inv2_ext%20%2F%20_inv2_scale%2C%20color%3DGREEN%2C%20linewidth%3D1.6%2C%20linestyle%3D%22--%22%0A%20%20%20%20)%0A%20%20%20%20_ax_inv.plot(%0A%20%20%20%20%20%20%20%20-_Vbi%2C%0A%20%20%20%20%20%20%20%200.0%2C%0A%20%20%20%20%20%20%20%20%22o%22%2C%0A%20%20%20%20%20%20%20%20color%3DNAVY%2C%0A%20%20%20%20%20%20%20%20markersize%3D8%2C%0A%20%20%20%20%20%20%20%20clip_on%3DFalse%2C%0A%20%20%20%20%20%20%20%20label%3Drf%22%24-V_%7B%7Bbi%7D%7D%20%3D%20%7B-_Vbi%3A.3f%7D%24%20V%22%2C%0A%20%20%20%20)%0A%20%20%20%20_ax_inv.plot(_VR%2C%20_inv2_op%20%2F%20_inv2_scale%2C%20%22o%22%2C%20color%3DORANGE%2C%20markersize%3D9)%0A%20%20%20%20_ax_inv.axhline(0.0%2C%20color%3DGRAY%2C%20linewidth%3D0.6)%0A%20%20%20%20_ax_inv.axvline(0.0%2C%20color%3DGRAY%2C%20linewidth%3D0.6%2C%20linestyle%3D%22%3A%22)%0A%20%20%20%20_ax_inv.set_xlim(-1.0%2C%20VR_MAX)%0A%20%20%20%20_ax_inv.set_ylim(bottom%3D-0.03%20*%20_slope%20*%20(_Vbi%20%2B%20VR_MAX)%20%2F%20_inv2_scale)%0A%20%20%20%20_ax_inv.set_xlabel(r%22%24V_R%24%20(V)%22)%0A%20%20%20%20_ax_inv.set_ylabel(%0A%20%20%20%20%20%20%20%20rf%22%24(1%2FC')%5E2%24%20(%2410%5E%7B%7B%7B_inv2_exp%7D%7D%7D%24%20cm%24%5E4%24%2FF%24%5E2%24)%22%0A%20%20%20%20)%0A%20%20%20%20_ax_inv.set_title(r%22(b)%20%20%24(1%2FC')%5E2%24%20versus%20%24V_R%24%22)%0A%20%20%20%20_ax_inv.legend(fontsize%3D16%2C%20loc%3D%22upper%20left%22)%0A%20%20%20%20style_ax(_ax_inv)%0A%0A%20%20%20%20_calc%20%3D%20mo.md(rf%22%22%22%0A%20%20%20%20%24%24%0A%20%20%20%20%5Cbegin%7B%7Baligned%7D%7D%0A%20%20%20%20V_%7B%7Bbi%7D%7D%20%26%3D%20%5Cfrac%7B%7BkT%7D%7D%7B%7Be%7D%7D%5Cln%5Cfrac%7B%7BN_aN_d%7D%7D%7B%7Bn_i%5E2%7D%7D%20%3D%20%7B_Vbi%3A.3f%7D%5C%20%5Cmathrm%7B%7BV%7D%7D%20%5C%5C%0A%20%20%20%20W%20%26%3D%20%5Cleft%5B%5Cfrac%7B%7B2%5Cvarepsilon_s(V_%7B%7Bbi%7D%7D%2BV_R)%7D%7D%7B%7Be%7D%7D%5C%2C%5Cfrac%7B%7BN_a%2BN_d%7D%7D%7B%7BN_aN_d%7D%7D%5Cright%5D%5E%7B%7B1%2F2%7D%7D%20%3D%20%7B_W_op%20*%201.0e4%3A.3f%7D%5C%20%5Cmu%5Cmathrm%7B%7Bm%7D%7D%20%5C%5C%0A%20%20%20%20C'%20%26%3D%20%5Cleft%5B%5Cfrac%7B%7Be%5Cvarepsilon_s%20N_aN_d%7D%7D%7B%7B2(V_%7B%7Bbi%7D%7D%2BV_R)(N_a%2BN_d)%7D%7D%5Cright%5D%5E%7B%7B1%2F2%7D%7D%20%3D%20%5Cfrac%7B%7B%5Cvarepsilon_s%7D%7D%7B%7BW%7D%7D%20%3D%20%7Bsci_tex(_C_op)%7D%5C%20%5Cmathrm%7B%7BF%2Fcm%5E2%7D%7D%20%5C%5C%0A%20%20%20%20%5Cfrac%7B%7Bd(1%2FC')%5E2%7D%7D%7B%7BdV_R%7D%7D%20%26%3D%20%5Cfrac%7B%7B2(N_a%2BN_d)%7D%7D%7B%7Be%5Cvarepsilon_s%20N_aN_d%7D%7D%20%3D%20%7Bsci_tex(_slope)%7D%5C%20%5Cmathrm%7B%7B(F%2Fcm%5E2)%5E%7B%7B-2%7D%7D%5C%2CV%5E%7B%7B-1%7D%7D%7D%7D%0A%20%20%20%20%5Cend%7B%7Baligned%7D%7D%0A%20%20%20%20%24%24%0A%20%20%20%20%22%22%22)%0A%20%20%20%20_note%20%3D%20mo.md(%0A%20%20%20%20%20%20%20%20rf%22%22%22%0A%20%20%20%20At%20%5C(V_R%20%3D%20%7B_VR%3A.1f%7D%5C%2C%5Cmathrm%7B%7BV%7D%7D%5C)%3A%20%5C(N_a%20%3D%20%7Bsci_tex(_Na)%7D%5C%2C%5Cmathrm%7B%7Bcm%7D%7D%5E%7B%7B-3%7D%7D%5C)%2C%20%5C(N_d%20%3D%20%7Bsci_tex(_Nd)%7D%5C%2C%5Cmathrm%7B%7Bcm%7D%7D%5E%7B%7B-3%7D%7D%5C).%20For%20a%20junction%20area%20%5C(A%20%3D%2010%5E%7B%7B-4%7D%7D%5C%2C%5Cmathrm%7B%7Bcm%7D%7D%5E2%5C)%2C%20%5C(C%20%3D%20C'A%20%3D%20%7B_C_op%20*%20AREA_CM2%20*%201.0e12%3A.3f%7D%5C%2C%5Cmathrm%7B%7BpF%7D%7D%5C).%20The%20dashed%20part%20of%20(b)%20is%20the%20straight%20line%20extended%20to%20its%20intercept%20at%20%5C(V_R%20%3D%20-V_%7B%7Bbi%7D%7D%5C).%0A%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20mo.vstack(%5B_fig%2C%20_calc%2C%20_note%5D)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20_explain%20%3D%20mo.accordion(%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22What%20the%20plots%20are%20doing%22%3A%20mo.md(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20r%22%22%22%0A%20%20%20%20Both%20panels%20use%20the%20same%20%5C(C'%5C)%2C%20Eq.%20(7.42).%20%5C(C'%5C)%20falls%20as%20%5C(1%2F%5Csqrt%7BV_%7Bbi%7D%2BV_R%7D%5C)%20because%20%5C(W%5C)%20grows%20as%20%5C(%5Csqrt%7BV_%7Bbi%7D%2BV_R%7D%5C)%2C%20and%20%5C(C'%20%3D%20%5Cvarepsilon_s%2FW%5C).%0A%0A%20%20%20%20Squaring%20the%20inverse%20gives%20a%20straight%20line%20in%20%5C(V_R%5C).%20Its%20slope%20depends%20only%20on%20%5C(N_aN_d%2F(N_a%2BN_d)%5C)%2C%20and%20it%20reaches%20zero%20at%20%5C(V_R%20%3D%20-V_%7Bbi%7D%5C).%20When%20one%20side%20is%20much%20more%20heavily%20doped%2C%20the%20slope%20is%20set%20by%20the%20lighter%20side%20alone.%0A%0A%20%20%20%20The%20grey%20dot%20in%20(a)%20is%20the%20zero-bias%20value%20%5C(C'_0%5C).%20The%20orange%20dots%20mark%20the%20%5C(V_R%5C)%20slider%20in%20both%20panels.%0A%0A%20%20%20%20The%20line%20in%20(b)%20is%20dashed%20for%20%5C(V_R%20%3C%200%5C)%2C%20which%20is%20forward%20bias.%20The%20depletion%20formula%20still%20gives%20a%20number%20there%2C%20but%20the%20diffusion%20capacitance%20%5C(C_d%5C)%20of%20the%20stored%20minority%20carriers%20is%20added%20and%20soon%20dominates.%20A%20C%E2%80%93V%20measurement%20is%20done%20in%20reverse%20bias%20and%20extrapolated%20to%20the%20intercept.%0A%20%20%20%20%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20)%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20)%0A%20%20%20%20_explain%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20%23%23%20Check%20your%20understanding%0A%0A%20%20%20%20Use%20the%20sliders%20and%20the%20numbers%20under%20the%20plot%2C%20then%20open%20the%20answers.%0A%0A%20%20%20%201.%20At%20the%20default%20dopings%2C%20what%20is%20%5C(C'%5C)%20at%20%5C(V_R%20%3D%205%5C%2C%5Cmathrm%7BV%7D%5C)%3F%20By%20what%20factor%20does%20%5C(C'%5C)%20fall%20from%20zero%20bias%20to%20%5C(V_R%20%3D%205%5C%2C%5Cmathrm%7BV%7D%5C)%3F%0A%20%20%20%202.%20Keep%20%5C(N_d%20%3D%2010%5E%7B15%7D%5C%2C%5Cmathrm%7Bcm%7D%5E%7B-3%7D%5C)%20and%20raise%20%5C(N_a%5C)%20from%20%5C(10%5E%7B16%7D%5C)%20to%20%5C(10%5E%7B18%7D%5C%2C%5Cmathrm%7Bcm%7D%5E%7B-3%7D%5C).%20Does%20the%20slope%20of%20%5C((1%2FC')%5E2%5C)%20change%20much%3F%20Why%3F%0A%20%20%20%203.%20Swap%20the%20two%20dopings%2C%20so%20%5C(N_a%20%3D%2010%5E%7B15%7D%5C)%20and%20%5C(N_d%20%3D%2010%5E%7B16%7D%5C%2C%5Cmathrm%7Bcm%7D%5E%7B-3%7D%5C).%20What%20changes%20on%20either%20plot%3F%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(built_in_voltage%2C%20inv_cap2_slope%2C%20junction_cap%2C%20mo%2C%20sci_tex)%3A%0A%20%20%20%20_Na%20%3D%201.0e16%0A%20%20%20%20_Nd%20%3D%201.0e15%0A%20%20%20%20_Vbi%20%3D%20built_in_voltage(_Na%2C%20_Nd)%0A%20%20%20%20_C0%20%3D%20float(junction_cap(_Na%2C%20_Nd%2C%20_Vbi))%0A%20%20%20%20_C5%20%3D%20float(junction_cap(_Na%2C%20_Nd%2C%20_Vbi%20%2B%205.0))%0A%20%20%20%20_s16%20%3D%20inv_cap2_slope(1.0e16%2C%20_Nd)%0A%20%20%20%20_s18%20%3D%20inv_cap2_slope(1.0e18%2C%20_Nd)%0A%20%20%20%20mo.accordion(%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22Answers%22%3A%20mo.md(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rf%22%22%22%0A%20%20%20%201.%20%5C(C'%20%3D%20%7Bsci_tex(_C5)%7D%5C%2C%5Cmathrm%7B%7BF%2Fcm%5E2%7D%7D%5C)%20at%20%5C(V_R%20%3D%205%5C%2C%5Cmathrm%7B%7BV%7D%7D%5C)%2C%20down%20from%20%5C(C'_0%20%3D%20%7Bsci_tex(_C0)%7D%5C%2C%5Cmathrm%7B%7BF%2Fcm%5E2%7D%7D%5C).%20The%20ratio%20is%20%5C(%5Csqrt%7B%7B(V_%7B%7Bbi%7D%7D%2B5)%2FV_%7B%7Bbi%7D%7D%7D%7D%20%3D%20%7B_C0%20%2F%20_C5%3A.2f%7D%5C)%2C%20because%20%5C(C'%20%5Cpropto%201%2F%5Csqrt%7B%7BV_%7B%7Bbi%7D%7D%2BV_R%7D%7D%5C).%0A%20%20%20%202.%20Only%20a%20little.%20The%20slope%20goes%20from%20%5C(%7Bsci_tex(_s16)%7D%5C)%20to%20%5C(%7Bsci_tex(_s18)%7D%5C%2C%5Cmathrm%7B%7B(F%2Fcm%5E2)%5E%7B%7B-2%7D%7D%5C%2CV%5E%7B%7B-1%7D%7D%7D%7D%5C)%2C%20a%20change%20of%20%5C(%7B(1%20-%20_s18%20%2F%20_s16)%20*%20100%3A.0f%7D%5C%25%5C).%20%5C((N_a%2BN_d)%2F(N_aN_d)%20%3D%201%2FN_a%20%2B%201%2FN_d%5C)%20is%20already%20dominated%20by%20%5C(1%2FN_d%5C)%20at%20%5C(N_a%20%3D%2010N_d%5C).%20The%20intercept%20moves%20a%20little%20too%2C%20because%20%5C(V_%7B%7Bbi%7D%7D%5C)%20grows%20with%20%5C(%5Cln%20N_a%5C).%0A%20%20%20%203.%20Nothing%20on%20the%20plots.%20%5C(C'%5C)%2C%20%5C(V_%7B%7Bbi%7D%7D%5C)%2C%20and%20the%20slope%20depend%20only%20on%20the%20product%20and%20sum%20of%20%5C(N_a%5C)%20and%20%5C(N_d%5C).%20Only%20the%20side%20that%20holds%20most%20of%20%5C(W%5C)%20changes.%20A%20C%E2%80%93V%20measurement%20cannot%20tell%20which%20side%20is%20which.%0A%20%20%20%20%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20)%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20)%0A%20%20%20%20return%0A%0A%0Aif%20__name__%20%3D%3D%20%22__main__%22%3A%0A%20%20%20%20app.run()%0A</marimo-code></head>
+  <body>
+    <div id="root"></div>
+    <script data-marimo="true">
+      Object.defineProperty(window, "__MARIMO_MOUNT_CONFIG__", {
+        value: Object.freeze({
+            "filename": "notebook.py",
+            "cwd": "",
+            "lspWorkspace": null,
+            "mode": "read",
+            "version": "0.24.2",
+            "serverToken": "unused",
+            "config": {"ai": {"allow_provider_config": true, "custom_providers": {}, "enabled": true, "models": {"custom_models": [], "displayed_models": []}}, "completion": {"activate_on_typing": true, "auto_close_pairs": true, "copilot": false, "signature_hint_on_typing": false}, "diagnostics": {"sql_linter": true}, "display": {"cell_output": "below", "code_editor_font_size": 14, "code_lens": true, "dataframes": "rich", "default_table_max_columns": 50, "default_table_page_size": 10, "default_width": "medium", "reference_highlighting": false, "theme": "light"}, "formatting": {"line_length": 79}, "keymap": {"overrides": {}, "preset": "default"}, "language_servers": {"pylsp": {"enable_flake8": false, "enable_mypy": true, "enable_pydocstyle": false, "enable_pyflakes": false, "enable_pylint": false, "enable_ruff": true, "enabled": false}}, "mcp": {"mcpServers": {}, "presets": []}, "package_management": {"manager": "pip"}, "runtime": {"auto_instantiate": false, "auto_reload": "off", "default_csv_encoding": "utf-8", "default_sql_output": "auto", "on_cell_change": "autorun", "output_max_bytes": 8000000, "reactive_tests": true, "show_tracebacks": false, "std_stream_max_bytes": 1000000, "watcher_on_save": "lazy"}, "save": {"autosave": "off", "autosave_delay": 1000, "format_on_save": false}, "server": {"browser": "default", "follow_symlink": false}, "snippets": {"custom_paths": [], "include_default_snippets": true}},
+            "configOverrides": {},
+            "appConfig": {"sql_output": "auto", "width": "medium"},
+            "layout": null,
+            "view": {"showAppCode": false},
+            "notebook": null,
+            "session": null,
+            "runtimeConfig": null
+        }),
+        writable: false,
+        configurable: false,
+      });
+    </script>
+  </body>
+</html>
