@@ -19,6 +19,7 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | Carrier Diffusion | [lectures/diffusion-continuity](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/diffusion-continuity) | [ece335.github.io/diffusion-continuity](https://ece335.github.io/diffusion-continuity) |
 | pn Junction under Applied Bias | [lectures/pn-junction-bias](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/pn-junction-bias) | [ece335.github.io/pn-junction-bias](https://ece335.github.io/pn-junction-bias) |
 | Junction Capacitance | [lectures/junction-capacitance](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/junction-capacitance) | [ece335.github.io/junction-capacitance](https://ece335.github.io/junction-capacitance) |
+| pn Junction Current | [lectures/pn-junction-current](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/pn-junction-current) | [ece335.github.io/pn-junction-current](https://ece335.github.io/pn-junction-current) |
 
 ## Adding a notebook later
 
