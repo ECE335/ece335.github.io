@@ -22,6 +22,7 @@ Marimo **source** notebooks live in [ECE335/interactive-notebooks](https://githu
 | pn Junction Current | [lectures/pn-junction-current](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/pn-junction-current) | [ece335.github.io/pn-junction-current](https://ece335.github.io/pn-junction-current) |
 | Metal–Semiconductor Junction | [lectures/metal-semiconductor](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/metal-semiconductor) | [ece335.github.io/metal-semiconductor](https://ece335.github.io/metal-semiconductor) |
 | MOS Capacitor | [lectures/mos-capacitor](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/mos-capacitor) | [ece335.github.io/mos-capacitor](https://ece335.github.io/mos-capacitor) |
+| MOSFET I–V | [lectures/mosfet-iv](https://github.com/ECE335/interactive-notebooks/tree/main/lectures/mosfet-iv) | [ece335.github.io/mosfet-iv](https://ece335.github.io/mosfet-iv) |
 
 ## Adding a notebook later
 
